@@ -1,0 +1,23 @@
+{
+  "total_logs_processed": 13,
+  "total_alerts": 13,
+  "skipped": 0,
+  "attack_count": 5,
+  "high_risk_count": 1,
+  "suspicious_count": 2,
+  "clean_count": 5,
+  "avg_response_time_ms": 1425.0,
+  "invalid_hw_count": 4,
+  "nodes_under_attack": [
+    "NODE-001",
+    "NODE-003",
+    "NODE-005",
+    "NODE-007"
+  ],
+  "schema_versions_seen": [
+    1,
+    2,
+    3,
+    99
+  ]
+}

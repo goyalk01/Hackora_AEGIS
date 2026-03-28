@@ -1,0 +1,406 @@
+[
+  {
+    "log_id": "LOG-1001",
+    "node_id": "NODE-001",
+    "node_name": "Alpha Server",
+    "region": "US-EAST",
+    "timestamp": "2024-03-01T12:05:00Z",
+    "ingestion_time": "2026-03-28T04:53:11Z",
+    "alert_level": "ATTACK",
+    "severity_score": 100,
+    "confidence_score": 100,
+    "is_anomaly": true,
+    "primary_reason": "Deceptive node: reports OPERATIONAL but HTTP=500 (>= 400)",
+    "reasons": [
+      "Deceptive node: reports OPERATIONAL but HTTP=500 (>= 400)",
+      "Server failure: HTTP=500 (>= 500)",
+      "Invalid hardware ID: Malicious pattern detected: 'MALWARE' found in decoded hardware ID",
+      "Extreme latency: 4200ms (>= 3000ms threshold)"
+    ],
+    "rule_ids": [
+      "status_contradiction",
+      "server_error",
+      "invalid_hardware_id",
+      "extreme_latency"
+    ],
+    "source_data": {
+      "reported_status": "OPERATIONAL",
+      "http_status": 500,
+      "response_time_ms": 4200,
+      "hardware_id_b64": "TUFMV0FSRV9QQVlMT0FEX3Yy",
+      "hardware_id_valid": false,
+      "hardware_id_decoded": "MALWARE_PAYLOAD_v2",
+      "schema_version": 1,
+      "schema_known": true
+    },
+    "parse_warnings": [
+      "hardware_id issue: Malicious pattern detected: 'MALWARE' found in decoded hardware ID"
+    ]
+  },
+  {
+    "log_id": "LOG-1002",
+    "node_id": "NODE-002",
+    "node_name": "Beta Gateway",
+    "region": "EU-WEST",
+    "timestamp": "2024-03-01T12:06:00Z",
+    "ingestion_time": "2026-03-28T04:53:11Z",
+    "alert_level": "SUSPICIOUS",
+    "severity_score": 30,
+    "confidence_score": 25,
+    "is_anomaly": true,
+    "primary_reason": "Elevated latency: 1800ms (>= 1500ms, < 3000ms)",
+    "reasons": [
+      "Elevated latency: 1800ms (>= 1500ms, < 3000ms)"
+    ],
+    "rule_ids": [
+      "elevated_latency"
+    ],
+    "source_data": {
+      "reported_status": "OPERATIONAL",
+      "http_status": 200,
+      "response_time_ms": 1800,
+      "hardware_id_b64": "Tk9ERTAwMl9IV19JRA==",
+      "hardware_id_valid": true,
+      "hardware_id_decoded": "NODE002_HW_ID",
+      "schema_version": 2,
+      "schema_known": true
+    },
+    "parse_warnings": []
+  },
+  {
+    "log_id": "LOG-1003",
+    "node_id": "NODE-003",
+    "node_name": "Gamma Load Balancer",
+    "region": "AP-SOUTH",
+    "timestamp": "2024-03-01T12:07:00Z",
+    "ingestion_time": "2026-03-28T04:53:11Z",
+    "alert_level": "ATTACK",
+    "severity_score": 90,
+    "confidence_score": 25,
+    "is_anomaly": true,
+    "primary_reason": "Server failure: HTTP=503 (>= 500)",
+    "reasons": [
+      "Server failure: HTTP=503 (>= 500)"
+    ],
+    "rule_ids": [
+      "server_error"
+    ],
+    "source_data": {
+      "reported_status": "DEGRADED",
+      "http_status": 503,
+      "response_time_ms": 350,
+      "hardware_id_b64": "R0FNTUFfTEJfSFdfMDAz",
+      "hardware_id_valid": true,
+      "hardware_id_decoded": "GAMMA_LB_HW_003",
+      "schema_version": 3,
+      "schema_known": true
+    },
+    "parse_warnings": []
+  },
+  {
+    "log_id": "LOG-1004",
+    "node_id": "NODE-004",
+    "node_name": "Delta Edge Router",
+    "region": "US-WEST",
+    "timestamp": "2024-03-01T12:08:00Z",
+    "ingestion_time": "2026-03-28T04:53:11Z",
+    "alert_level": "CLEAN",
+    "severity_score": 0,
+    "confidence_score": 0,
+    "is_anomaly": false,
+    "primary_reason": null,
+    "reasons": [],
+    "rule_ids": [],
+    "source_data": {
+      "reported_status": "OPERATIONAL",
+      "http_status": 200,
+      "response_time_ms": 320,
+      "hardware_id_b64": "REVMVEFFRGRFX0VER0VfUk9VVEVS",
+      "hardware_id_valid": true,
+      "hardware_id_decoded": "DELTAEDdE_EDGE_ROUTER",
+      "schema_version": 2,
+      "schema_known": true
+    },
+    "parse_warnings": []
+  },
+  {
+    "log_id": "LOG-1005",
+    "node_id": "NODE-005",
+    "node_name": "Epsilon Firewall",
+    "region": "EU-NORTH",
+    "timestamp": "2024-03-01T12:09:00Z",
+    "ingestion_time": "2026-03-28T04:53:11Z",
+    "alert_level": "ATTACK",
+    "severity_score": 100,
+    "confidence_score": 50,
+    "is_anomaly": true,
+    "primary_reason": "Deceptive node: reports OPERATIONAL but HTTP=403 (>= 400)",
+    "reasons": [
+      "Deceptive node: reports OPERATIONAL but HTTP=403 (>= 400)",
+      "Invalid hardware ID: Malicious pattern detected: 'EXPLOIT' found in decoded hardware ID"
+    ],
+    "rule_ids": [
+      "status_contradiction",
+      "invalid_hardware_id"
+    ],
+    "source_data": {
+      "reported_status": "OPERATIONAL",
+      "http_status": 403,
+      "response_time_ms": 980,
+      "hardware_id_b64": "RVhQTE9JVF9JTkpFQ1RfU0hFTEw=",
+      "hardware_id_valid": false,
+      "hardware_id_decoded": "EXPLOIT_INJECT_SHELL",
+      "schema_version": 1,
+      "schema_known": true
+    },
+    "parse_warnings": [
+      "hardware_id issue: Malicious pattern detected: 'EXPLOIT' found in decoded hardware ID"
+    ]
+  },
+  {
+    "log_id": "LOG-1006",
+    "node_id": "NODE-006",
+    "node_name": "Zeta DNS Server",
+    "region": "US-EAST",
+    "timestamp": "2024-03-01T12:10:00Z",
+    "ingestion_time": "2026-03-28T04:53:11Z",
+    "alert_level": "HIGH_RISK",
+    "severity_score": 58,
+    "confidence_score": 25,
+    "is_anomaly": true,
+    "primary_reason": "Extreme latency: 3500ms (>= 3000ms threshold)",
+    "reasons": [
+      "Extreme latency: 3500ms (>= 3000ms threshold)"
+    ],
+    "rule_ids": [
+      "extreme_latency"
+    ],
+    "source_data": {
+      "reported_status": "OPERATIONAL",
+      "http_status": 200,
+      "response_time_ms": 3500,
+      "hardware_id_b64": "WkVUQV9ETlNfSFdfMDA2",
+      "hardware_id_valid": true,
+      "hardware_id_decoded": "ZETA_DNS_HW_006",
+      "schema_version": 3,
+      "schema_known": true
+    },
+    "parse_warnings": []
+  },
+  {
+    "log_id": "LOG-1007",
+    "node_id": "NODE-007",
+    "node_name": "Eta Cache Node",
+    "region": "AP-EAST",
+    "timestamp": "2024-03-01T12:11:00Z",
+    "ingestion_time": "2026-03-28T04:53:11Z",
+    "alert_level": "ATTACK",
+    "severity_score": 100,
+    "confidence_score": 100,
+    "is_anomaly": true,
+    "primary_reason": "Deceptive node: reports OPERATIONAL but HTTP=502 (>= 400)",
+    "reasons": [
+      "Deceptive node: reports OPERATIONAL but HTTP=502 (>= 400)",
+      "Server failure: HTTP=502 (>= 500)",
+      "Invalid hardware ID: Malicious pattern detected: 'MALWARE' found in decoded hardware ID",
+      "Elevated latency: 2700ms (>= 1500ms, < 3000ms)"
+    ],
+    "rule_ids": [
+      "status_contradiction",
+      "server_error",
+      "invalid_hardware_id",
+      "elevated_latency"
+    ],
+    "source_data": {
+      "reported_status": "OPERATIONAL",
+      "http_status": 502,
+      "response_time_ms": 2700,
+      "hardware_id_b64": "TUFMV0FSRV9DTUQ=",
+      "hardware_id_valid": false,
+      "hardware_id_decoded": "MALWARE_CMD",
+      "schema_version": 2,
+      "schema_known": true
+    },
+    "parse_warnings": [
+      "hardware_id issue: Malicious pattern detected: 'MALWARE' found in decoded hardware ID"
+    ]
+  },
+  {
+    "log_id": "LOG-1008",
+    "node_id": "NODE-008",
+    "node_name": "Theta Auth Service",
+    "region": "EU-WEST",
+    "timestamp": "2024-03-01T12:12:00Z",
+    "ingestion_time": "2026-03-28T04:53:11Z",
+    "alert_level": "CLEAN",
+    "severity_score": 0,
+    "confidence_score": 0,
+    "is_anomaly": false,
+    "primary_reason": null,
+    "reasons": [],
+    "rule_ids": [],
+    "source_data": {
+      "reported_status": "OPERATIONAL",
+      "http_status": 200,
+      "response_time_ms": 410,
+      "hardware_id_b64": "VEVFVEFBVVRIX0hXXzAwOA==",
+      "hardware_id_valid": true,
+      "hardware_id_decoded": "TEETAAUTH_HW_008",
+      "schema_version": 3,
+      "schema_known": true
+    },
+    "parse_warnings": []
+  },
+  {
+    "log_id": "LOG-1009",
+    "node_id": "NODE-009",
+    "node_name": "Iota Monitoring Agent",
+    "region": "US-EAST",
+    "timestamp": "2024-03-01T12:13:00Z",
+    "ingestion_time": "2026-03-28T04:53:11Z",
+    "alert_level": "CLEAN",
+    "severity_score": 3,
+    "confidence_score": 25,
+    "is_anomaly": false,
+    "primary_reason": "Unknown schema version=99 \u2014 field mapping may be incomplete",
+    "reasons": [
+      "Unknown schema version=99 \u2014 field mapping may be incomplete"
+    ],
+    "rule_ids": [
+      "schema_unknown"
+    ],
+    "source_data": {
+      "reported_status": "UNKNOWN",
+      "http_status": 200,
+      "response_time_ms": 500,
+      "hardware_id_b64": "SU9UQV9NT05fSFdfMDA5",
+      "hardware_id_valid": true,
+      "hardware_id_decoded": "IOTA_MON_HW_009",
+      "schema_version": 99,
+      "schema_known": false
+    },
+    "parse_warnings": [
+      "Unknown schema_version=99 \u2014 fields may not map correctly"
+    ]
+  },
+  {
+    "log_id": "LOG-1010",
+    "node_id": "NODE-010",
+    "node_name": "Kappa Backup Node",
+    "region": "AP-SOUTH",
+    "timestamp": "2024-03-01T12:14:00Z",
+    "ingestion_time": "2026-03-28T04:53:11Z",
+    "alert_level": "CLEAN",
+    "severity_score": 0,
+    "confidence_score": 0,
+    "is_anomaly": false,
+    "primary_reason": null,
+    "reasons": [],
+    "rule_ids": [],
+    "source_data": {
+      "reported_status": "OPERATIONAL",
+      "http_status": 200,
+      "response_time_ms": 290,
+      "hardware_id_b64": "S0FQUEFCQUNLVVBIQVNIX0hXXzAxMA==",
+      "hardware_id_valid": true,
+      "hardware_id_decoded": "KAPPABACKUPHASH_HW_010",
+      "schema_version": 1,
+      "schema_known": true
+    },
+    "parse_warnings": []
+  },
+  {
+    "log_id": "LOG-1011",
+    "node_id": "NODE-999",
+    "node_name": "UNKNOWN",
+    "region": "UNKNOWN",
+    "timestamp": "2024-03-01T12:15:00Z",
+    "ingestion_time": "2026-03-28T04:53:11Z",
+    "alert_level": "CLEAN",
+    "severity_score": 0,
+    "confidence_score": 0,
+    "is_anomaly": false,
+    "primary_reason": null,
+    "reasons": [],
+    "rule_ids": [],
+    "source_data": {
+      "reported_status": "OPERATIONAL",
+      "http_status": 200,
+      "response_time_ms": 450,
+      "hardware_id_b64": "Tk9ERTk5OV9IV19JRA==",
+      "hardware_id_valid": true,
+      "hardware_id_decoded": "NODE999_HW_ID",
+      "schema_version": 2,
+      "schema_known": true
+    },
+    "parse_warnings": [
+      "node_id='NODE-999' not found in node_registry \u2014 using defaults"
+    ]
+  },
+  {
+    "log_id": "LOG-1012",
+    "node_id": "NODE-001",
+    "node_name": "Alpha Server",
+    "region": "US-EAST",
+    "timestamp": "2024-03-01T12:16:00Z",
+    "ingestion_time": "2026-03-28T04:53:11Z",
+    "alert_level": "ATTACK",
+    "severity_score": 100,
+    "confidence_score": 50,
+    "is_anomaly": true,
+    "primary_reason": "Invalid hardware ID: Malicious pattern detected: 'MALWARE' found in decoded hardware ID",
+    "reasons": [
+      "Invalid hardware ID: Malicious pattern detected: 'MALWARE' found in decoded hardware ID",
+      "HTTP status is missing (field not found in log) \u2014 node health unverifiable"
+    ],
+    "rule_ids": [
+      "invalid_hardware_id",
+      "unknown_http_status"
+    ],
+    "source_data": {
+      "reported_status": "MAINTENANCE",
+      "http_status": -1,
+      "response_time_ms": -1,
+      "hardware_id_b64": "TUFMV0FSRV9QQVlMT0FEX3Yy",
+      "hardware_id_valid": false,
+      "hardware_id_decoded": "MALWARE_PAYLOAD_v2",
+      "schema_version": 1,
+      "schema_known": true
+    },
+    "parse_warnings": [
+      "http_status is missing or null \u2014 defaulted to -1",
+      "response_time_ms is missing or null \u2014 defaulted to -1",
+      "hardware_id issue: Malicious pattern detected: 'MALWARE' found in decoded hardware ID"
+    ]
+  },
+  {
+    "log_id": "LOG-1013",
+    "node_id": "NODE-002",
+    "node_name": "Beta Gateway",
+    "region": "EU-WEST",
+    "timestamp": "2024-03-01T12:17:00Z",
+    "ingestion_time": "2026-03-28T04:53:11Z",
+    "alert_level": "SUSPICIOUS",
+    "severity_score": 30,
+    "confidence_score": 25,
+    "is_anomaly": true,
+    "primary_reason": "Elevated latency: 1600ms (>= 1500ms, < 3000ms)",
+    "reasons": [
+      "Elevated latency: 1600ms (>= 1500ms, < 3000ms)"
+    ],
+    "rule_ids": [
+      "elevated_latency"
+    ],
+    "source_data": {
+      "reported_status": "OPERATIONAL",
+      "http_status": 200,
+      "response_time_ms": 1600,
+      "hardware_id_b64": "Tk9ERTAwMl9IV19JRA==",
+      "hardware_id_valid": true,
+      "hardware_id_decoded": "NODE002_HW_ID",
+      "schema_version": 3,
+      "schema_known": true
+    },
+    "parse_warnings": []
+  }
+]

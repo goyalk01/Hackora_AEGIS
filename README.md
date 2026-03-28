@@ -1,29 +1,29 @@
-# 🛡️ AEGIS — Cyber-Infrastructure Defense
+# AEGIS — Cyber-Infrastructure Defense System
 
 > **Detect the truth beneath the lies. Hunt threats hiding inside "Operational" systems.**
 
 [![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?logo=fastapi)](https://fastapi.tiangolo.com)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Hackathon--Ready-orange)]()
 
 ---
 
-## 🚀 Overview
+## Overview
 
-**AEGIS** is a deterministic, rule-based cyber-infrastructure defense pipeline that detects hidden attacks in infrastructure logs — even when the logs themselves are designed to deceive.
+**AEGIS** is a complete cyber-infrastructure defense system that detects hidden attacks in infrastructure logs — even when the logs themselves are designed to deceive.
 
 Traditional monitoring trusts what logs *say*. AEGIS trusts what logs *reveal*.
 
-| Aspect | Value |
-|--------|-------|
-| **Input** | Raw, multi-schema JSON system logs |
-| **Output** | Classified alerts (ATTACK / HIGH_RISK / SUSPICIOUS / CLEAN) + metrics |
-| **Approach** | Schema normalization → rule-based anomaly detection |
-| **Dependencies** | Zero external libraries — 100% Python standard library |
+| Component | Description |
+|-----------|-------------|
+| **Step 1** | Data Engineering — Schema-aware normalization pipeline |
+| **Step 2** | Detection Engine — Rule-based threat classification |
+| **Step 3** | API Layer — FastAPI backend with filtering and metrics |
 
 ---
 
-## ⚠️ Problem Statement
+## Problem Statement
 
 Modern cyber attacks exploit the gap between **what a system reports** and **what it actually does**:
 
@@ -36,7 +36,7 @@ Modern cyber attacks exploit the gap between **what a system reports** and **wha
 
 ---
 
-## 💡 Solution Approach
+## Solution Approach
 
 AEGIS extracts ground truth from contradictions:
 
@@ -52,7 +52,7 @@ All classification is **deterministic and rule-based** — no ML, no ambiguity, 
 
 ---
 
-## 🧱 Architecture
+## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -61,145 +61,244 @@ All classification is **deterministic and rule-based** — no ML, no ambiguity, 
 └──────────────────────────┬──────────────────────────────────────┘
                            │
              ┌─────────────▼─────────────┐
-             │     loader.py             │  Fault-tolerant JSON loader
-             │  + utils.py               │  Safe casts, Base64 pipeline
+             │     STEP 1: NORMALIZE     │
+             │  loader.py + normalizer.py│
+             │  → normalized_logs.json   │
              └─────────────┬─────────────┘
                            │
              ┌─────────────▼─────────────┐
-             │    normalizer.py          │  Schema-aware field extraction
-             │                           │  O(1) registry + schema lookups
-             │  → normalized_logs.json   │  Unified NormalizedLog structure
+             │     STEP 2: DETECT        │
+             │  rules.py + evaluator.py  │
+             │  + detector.py            │
+             │  → alerts.json            │
+             │  → metrics.json           │
              └─────────────┬─────────────┘
                            │
              ┌─────────────▼─────────────┐
-             │  rules.py + evaluator.py  │  Configurable rule registry
-             │  + detector.py            │  Priority-ordered classification
-             │                           │  Severity + confidence scoring
-             │  → alerts.json            │  Classified alerts
-             │  → metrics.json           │  Aggregate statistics
+             │     STEP 3: API           │
+             │  app.py + api/routes.py   │
+             │  + api/service.py         │
+             │  → REST endpoints         │
              └───────────────────────────┘
 ```
 
 ---
 
-## ⚙️ Core Features
+## Core Features
 
 | Feature | Detail |
 |---------|--------|
 | **Schema-aware normalization** | v1/v2/v3 field names dynamically resolved via `schema_versions.json` |
-| **Multi-version log handling** | All schema versions collapse into one canonical `NormalizedLog` structure |
 | **5-stage Base64 pipeline** | Format check → decode → UTF-8 → malicious keyword scan → clean |
 | **Rule-based anomaly detection** | 7 deterministic rules, zero model drift |
-| **Multi-reason alerts** | Every triggered rule adds a human-readable reason string |
 | **Priority-ordered classification** | `ATTACK > HIGH_RISK > SUSPICIOUS > CLEAN` — never downgrades |
-| **Severity scoring** | 0–100 score: base per level + bonus per triggered rule, capped at 100 |
-| **Confidence scoring** | `min(rules_fired × 25, 100)` — 1 rule = 25%, 4+ rules = 100% |
-| **Fault tolerance** | Every stage wrapped in `try/except` — bad logs skipped, pipeline never crashes |
-| **Sentinel handling** | Missing int fields default to `-1`; detection engine interprets correctly |
+| **Severity scoring** | 0–100 score: base per level + bonus per triggered rule |
+| **Confidence scoring** | `min(rules_fired × 25, 100)` — 4+ rules = 100% |
+| **FastAPI REST API** | Filtered alerts, metrics, summary, pipeline trigger |
+| **Standardized responses** | Consistent JSON structure with timestamps and request tracking |
 
 ---
 
-## 🧠 Detection Logic
+## Detection Logic
 
 ### Rule Priority: `ATTACK > HIGH_RISK > SUSPICIOUS > CLEAN`
 
-All rules are evaluated. The **highest-priority rule that fires** determines the final level. All reasons are accumulated regardless.
+All rules are evaluated. The **highest-priority rule that fires** determines the final level.
 
----
+### ATTACK (Critical)
 
-### 🚨 ATTACK (any one condition)
+| Rule | Condition |
+|------|-----------|
+| `status_contradiction` | `reported_status == "OPERATIONAL"` AND `http_status >= 400` |
+| `server_error` | `http_status >= 500` |
+| `invalid_hardware_id` | `hardware_id_valid == False` |
+| `unknown_http_status` | `http_status == -1` (missing/sentinel) |
 
-| Rule | Condition | Why |
-|------|-----------|-----|
-| `status_contradiction` | `reported_status == "OPERATIONAL"` AND `http_status >= 400` | Node lies about health |
-| `server_error` | `http_status >= 500` | Server crash, always critical |
-| `invalid_hardware_id` | `hardware_id_valid == False` | Corrupted or malicious payload |
-| `unknown_http_status` | `http_status == -1` (sentinel) | Health unverifiable — hostile assumption |
-
-### 🔥 HIGH_RISK
+### HIGH_RISK
 
 | Rule | Condition |
 |------|-----------|
 | `extreme_latency` | `response_time_ms >= 3000ms` |
 
-### ⚠️ SUSPICIOUS
+### SUSPICIOUS
 
 | Rule | Condition |
 |------|-----------|
-| `elevated_latency` | `1500ms ≤ response_time_ms < 3000ms` |
+| `elevated_latency` | `1500ms <= response_time_ms < 3000ms` |
 
-> **Note:** `elevated_latency` and `extreme_latency` are **mutually exclusive** — no double-firing.
-
----
-
-### Quick Example
+### Example
 
 ```json
-Input log (Schema v1):
-{ "status": "Operational", "http_code": 500, "latency": 4200,
-  "hardware_id_b64": "TUFMV0FSRV9QQVlMT0FEX3Yy" }
+Input: { "status": "Operational", "http_code": 500, "latency": 4200,
+         "hardware_id_b64": "TUFMV0FSRV9QQVlMT0FEX3Yy" }
 
 Decoded hardware_id: "MALWARE_PAYLOAD_v2" → INVALID
 
 Rules fired:
   ✅ status_contradiction  (OPERATIONAL + HTTP 500)
-  ✅ server_error          (HTTP 500 ≥ 500)
-  ✅ invalid_hardware_id   (decoded: MALWARE_PAYLOAD_v2)
-  ✅ extreme_latency       (4200ms ≥ 3000ms)
+  ✅ server_error          (HTTP 500)
+  ✅ invalid_hardware_id   (malicious keyword detected)
+  ✅ extreme_latency       (4200ms >= 3000ms)
 
-Result:
-  alert_level    → ATTACK
-  severity_score → 100  (capped)
-  confidence     → 100%
+Result: ATTACK | severity: 100 | confidence: 100%
 ```
 
 ---
 
-## 📂 Project Structure
+## API Endpoints
 
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/` | API status and available endpoints |
+| `GET` | `/health` | Health check |
+| `GET` | `/alerts` | Detection alerts with filtering |
+| `GET` | `/metrics` | Pipeline metrics and statistics |
+| `GET` | `/summary` | Combined metrics + top critical alerts |
+| `POST` | `/run-pipeline` | Trigger detection pipeline |
+
+### Query Parameters for `/alerts`
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `level` | string | Filter: `ATTACK`, `HIGH_RISK`, `SUSPICIOUS`, `CLEAN` |
+| `region` | string | Filter by region (case-insensitive) |
+| `node_id` | string | Filter by exact node_id |
+| `limit` | int | Max results (default: 50, max: 100) |
+
+**Sorting:** Results sorted by `severity_score` DESC, then `timestamp` DESC.
+
+---
+
+## API Response Format
+
+### Success Response
+
+```json
+{
+  "status": "success",
+  "data": {
+    "total": 5,
+    "alerts": [...]
+  },
+  "timestamp": "2026-03-28T12:00:00Z",
+  "version": "1.0",
+  "request_id": "a1b2c3d4",
+  "processing_time_ms": 12.5
+}
 ```
-aegis/
-├── backend/
-│   ├── main.py              # 🔗 Full pipeline entry point + FastAPI helpers
-│   ├── loader.py            # 📥 Fault-tolerant JSON file loader
-│   ├── utils.py             # 🛠️ safe_int, safe_str, Base64 validator, timestamp
-│   ├── normalizer.py        # 🔄 Schema mapping + unified NormalizedLog builder
-│   ├── rules.py             # ⚙️ All thresholds + severity config (edit here to tune)
-│   ├── evaluator.py         # 🔍 Pure rule functions — one per rule, fully testable
-│   ├── detector.py          # 🚨 Orchestrator: apply_rules → level → score → alert
-│   ├── detection_test.py    # ✅ 9 unit tests covering all classification cases
-│   └── data/
-│       ├── node_registry.json      # Node metadata (name, region, hardware ID)
-│       ├── system_logs.json        # Raw logs (3 schema versions + edge cases)
-│       ├── schema_versions.json    # Field name mappings per version
-│       ├── normalized_logs.json    # ← Generated by pipeline
-│       ├── alerts.json             # ← Generated by pipeline
-│       └── metrics.json            # ← Generated by pipeline
-└── README.md
+
+### Error Response
+
+```json
+{
+  "status": "error",
+  "message": "No alerts file found. Run the pipeline first.",
+  "timestamp": "2026-03-28T12:00:00Z",
+  "version": "1.0",
+  "request_id": "e5f6g7h8",
+  "processing_time_ms": 2.1
+}
+```
+
+### Sample Alert Object
+
+```json
+{
+  "log_id": "LOG-1001",
+  "node_id": "NODE-001",
+  "node_name": "Alpha Server",
+  "region": "US-EAST",
+  "timestamp": "2024-03-01T12:05:00Z",
+  "alert_level": "ATTACK",
+  "severity_score": 100,
+  "confidence_score": 100,
+  "is_anomaly": true,
+  "primary_reason": "Deceptive node: reports OPERATIONAL but HTTP=500",
+  "reasons": [
+    "Deceptive node: reports OPERATIONAL but HTTP=500",
+    "Server failure: HTTP=500",
+    "Invalid hardware ID: Malicious pattern detected"
+  ],
+  "rule_ids": ["status_contradiction", "server_error", "invalid_hardware_id"]
+}
+```
+
+### Sample Metrics Response
+
+```json
+{
+  "status": "success",
+  "data": {
+    "total_logs": 13,
+    "total_alerts": 13,
+    "attack_count": 5,
+    "high_risk_count": 1,
+    "suspicious_count": 2,
+    "clean_count": 5,
+    "attack_percentage": 38.46,
+    "threat_percentage": 46.15,
+    "total_nodes": 10,
+    "nodes_under_attack": ["NODE-001", "NODE-003", "NODE-005", "NODE-007"]
+  },
+  "timestamp": "2026-03-28T12:00:00Z",
+  "version": "1.0"
+}
 ```
 
 ---
 
-## ▶️ How to Run
+## Project Structure
+
+```
+backend/
+├── app.py                 # FastAPI application entry point
+├── main.py                # Pipeline orchestrator
+├── loader.py              # Fault-tolerant JSON loader
+├── normalizer.py          # Schema-aware normalization
+├── rules.py               # Detection thresholds and config
+├── evaluator.py           # Rule evaluation functions
+├── detector.py            # Detection engine orchestrator
+├── utils.py               # Safe casts, Base64 validator
+├── api/
+│   ├── routes.py          # HTTP endpoint definitions
+│   └── service.py         # Service layer (business logic)
+├── data/
+│   ├── system_logs.json        # Raw input logs
+│   ├── node_registry.json      # Node metadata
+│   ├── schema_versions.json    # Schema field mappings
+│   ├── normalized_logs.json    # Generated: normalized logs
+│   ├── alerts.json             # Generated: detection alerts
+│   └── metrics.json            # Generated: aggregate metrics
+├── pipeline_test.py       # Normalization smoke test
+└── detection_test.py      # Detection engine unit tests
+```
+
+---
+
+## How to Run
 
 ### Prerequisites
 
 ```bash
-Python 3.10+   # No pip install required — zero external dependencies
+Python 3.10+
+pip install fastapi uvicorn
 ```
 
-### Run the Full Pipeline
+### Start the API Server
+
+```bash
+cd backend
+uvicorn app:app --reload
+```
+
+Open: **http://127.0.0.1:8000/docs** (Swagger UI)
+
+### Run Pipeline Only (CLI)
 
 ```bash
 cd backend
 python main.py
 ```
-
-**What this does:**
-1. Loads `node_registry.json`, `system_logs.json`, `schema_versions.json`
-2. Normalizes all logs → saves `data/normalized_logs.json`
-3. Runs detection engine → saves `data/alerts.json` + `data/metrics.json`
-4. Prints a summary to stdout
 
 ### Run Unit Tests
 
@@ -208,156 +307,78 @@ cd backend
 python detection_test.py
 ```
 
-Expected output: **9/9 tests pass** with `✅ PASS` markers.
-
-### Normalization Smoke Test Only
-
-```bash
-cd backend
-python pipeline_test.py
-```
+Expected: **9/9 tests pass**
 
 ---
 
-## 📊 Sample Output
-
-### Alert (from `alerts.json`)
-
-```json
-{
-  "log_id":           "LOG-1001",
-  "node_id":          "NODE-001",
-  "node_name":        "Alpha Server",
-  "region":           "US-EAST",
-  "timestamp":        "2024-03-01T12:05:00Z",
-  "ingestion_time":   "2024-03-01T12:05:01Z",
-  "alert_level":      "ATTACK",
-  "severity_score":   100,
-  "confidence_score": 100,
-  "is_anomaly":       true,
-  "primary_reason":   "Deceptive node: reports OPERATIONAL but HTTP=500 (>= 400)",
-  "reasons": [
-    "Deceptive node: reports OPERATIONAL but HTTP=500 (>= 400)",
-    "Server failure: HTTP=500 (>= 500)",
-    "Invalid hardware ID: Malicious pattern detected: 'MALWARE'",
-    "Extreme latency: 4200ms (>= 3000ms threshold)"
-  ],
-  "rule_ids": ["status_contradiction", "server_error", "invalid_hardware_id", "extreme_latency"],
-  "source_data": {
-    "reported_status":    "OPERATIONAL",
-    "http_status":        500,
-    "response_time_ms":   4200,
-    "hardware_id_b64":    "TUFMV0FSRV9QQVlMT0FEX3Yy",
-    "hardware_id_valid":  false,
-    "hardware_id_decoded":"MALWARE_PAYLOAD_v2",
-    "schema_version":     1,
-    "schema_known":       true
-  },
-  "parse_warnings": []
-}
-```
-
-### Metrics (from `metrics.json`)
-
-```json
-{
-  "total_logs_processed": 13,
-  "attack_count":          5,
-  "high_risk_count":       1,
-  "suspicious_count":      2,
-  "clean_count":           5,
-  "avg_response_time_ms":  1847.3,
-  "invalid_hw_count":      3,
-  "nodes_under_attack":   ["NODE-001", "NODE-005", "NODE-007"],
-  "schema_versions_seen": [1, 2, 3]
-}
-```
-
----
-
-## 🧪 Testing
-
-**Test file:** [`detection_test.py`](backend/detection_test.py)
+## Testing
 
 | # | Case | Validates |
 |---|------|-----------|
 | 1 | CLEAN | Healthy log → no rules fire |
-| 2 | SUSPICIOUS | Latency 1800ms → `elevated_latency` fires |
-| 3 | HIGH_RISK | Latency 3500ms → `extreme_latency` fires |
-| 4 | ATTACK | HTTP 500 + deceptive status + malicious HW ID |
-| 5 | ATTACK (multi) | HTTP 502 + bad hardware ID |
-| 6 | ATTACK | `http_status = -1` sentinel → health unverifiable |
-| 7 | ATTACK | Invalid Base64 format in hardware ID |
-| 8 | ATTACK | Unknown schema version → `http_status` falls to -1 |
-| 9 | Regression | Latency 3000ms → `elevated_latency` must NOT double-fire |
-
-**Edge cases specifically covered:** null fields, invalid Base64, unknown schema version, sentinel `-1` handling, type coercion from strings.
+| 2 | SUSPICIOUS | Latency 1800ms → `elevated_latency` |
+| 3 | HIGH_RISK | Latency 3500ms → `extreme_latency` |
+| 4 | ATTACK | HTTP 500 + deceptive status + malicious HW |
+| 5 | ATTACK | HTTP 502 + invalid hardware ID |
+| 6 | ATTACK | Missing http_status (sentinel -1) |
+| 7 | ATTACK | Invalid Base64 format |
+| 8 | ATTACK | Unknown schema version fallback |
+| 9 | Regression | Latency rules mutually exclusive |
 
 ---
 
-## 🔐 Security & Reliability
+## Security & Reliability
 
 ### Base64 Safety
 The 5-stage hardware ID validation pipeline **never executes decoded content**:
 ```
 Format check → Decode bytes → UTF-8 decode → Keyword scan → Safe storage
 ```
-Decoded strings are stored as data evidence only. `eval()`, `exec()`, and `os.system()` are never called.
 
-**Malicious keyword list:** `MALWARE`, `PAYLOAD`, `EXPLOIT`, `INJECT`, `SHELL`, `CMD`, `EXEC`, `BACKDOOR`, `ROOTKIT`, `TROJAN`, `RANSOMWARE`, `KEYLOG`
+**Malicious keywords scanned:** `MALWARE`, `PAYLOAD`, `EXPLOIT`, `INJECT`, `SHELL`, `CMD`, `EXEC`, `BACKDOOR`, `ROOTKIT`, `TROJAN`, `RANSOMWARE`, `KEYLOG`
 
 ### Fault Tolerance
-- **Loader:** `FileNotFoundError` + `JSONDecodeError` → returns `[]`, never raises
-- **Normalizer:** Unknown schema → v1 fallback; missing field → sentinel default; outer `try/except` per log
-- **Detector:** Per-rule `try/except` + per-log `try/except` → never crashes on bad data
-
-### Sentinel Contract
-
-| Field | Sentinel | Step 2 Behaviour |
-|-------|----------|-----------------|
-| `http_status` | `-1` | Fires `unknown_http_status` → **ATTACK** |
-| `response_time_ms` | `-1` | Skips all latency rules — no false penalty |
-| `hardware_id_valid` | `False` / `None` | Fires `invalid_hardware_id` → **ATTACK** |
+- **Loader:** File errors return empty list, never crash
+- **Normalizer:** Unknown schema → v1 fallback; missing field → sentinel
+- **Detector:** Per-rule and per-log exception handling
+- **API:** Safe JSON parsing, no `eval()`, proper error responses
 
 ---
 
-## ⚡ Performance
+## Performance
 
-- **O(n) single-pass** processing — one loop over logs for normalize + detect
-- **O(1) dict lookups** — `registry_map[node_id]` and `schema_map[version]` pre-built before the loop
-- **Zero external dependencies** — no install, no cold-start latency from package loading
-- **In-memory state** — `main.py` holds `alerts` and `metrics_summary` for zero-latency API reads
+- **O(n) single-pass** processing for normalize + detect
+- **O(1) dict lookups** for registry and schema maps
+- **Lightweight API** — file-based reads, no database overhead
+- **Request tracking** — unique request_id and processing_time_ms per call
 
 ---
 
-## 🏆 Hackathon Context
+## Hackathon Context
 
 Built for the **AEGIS Cyber-Infrastructure Defense** challenge.
 
 Design philosophy:
 - **Correctness over complexity** — deterministic rules, auditable results
-- **Simplicity over overengineering** — zero ML, zero external libraries
+- **Simplicity over overengineering** — zero ML, zero external libraries for core logic
 - **Truth over reported state** — HTTP codes + latency over status strings
 
-The system handles every edge case the challenge dataset can produce: schema version mismatches, null fields, malformed Base64, missing node metadata, and sentinel fallbacks — without a single unhandled exception.
+---
+
+## Future Scope
+
+- **Frontend Dashboard** — React/Next.js with alert tables and threat heatmaps
+- **Real-time Processing** — WebSocket push for live alert streaming
+- **Multi-tenant Support** — Organization-scoped data isolation
+- **Export & Reporting** — CSV/PDF alert reports with filtering
+- **Horizontal Scaling** — Redis caching, async pipeline workers
 
 ---
 
-## 🚀 Future Enhancements
+## Author
 
-- **Step 3 — FastAPI REST API:** `GET /alerts`, `GET /metrics`, `POST /logs` (live ingestion)
-- **Step 4 — Dashboard UI:** Next.js + Recharts alert table, sleeper heatmap, status summary cards
-- **Real-time processing:** WebSocket push for live alert streaming
-- **Schema Console:** Dynamic multi-version schema tracker in the UI
-- **Exportable reports:** CSV/JSON alert export with filtering
-
----
-
-## 👨‍💻 Author
-
-**Krish Goyal**  
-GitHub: [@goyalk01](https://github.com/goyalk01)  
-Repository: [github.com/goyalk01/aegis-cyber-defense](https://github.com/goyalk01/aegis-cyber-defense)
+**Krish Goyal**
+GitHub: [github.com/goyalk01](https://github.com/goyalk01)
 
 ---
 
