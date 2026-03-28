@@ -26,6 +26,10 @@ export function CityMap({ alerts, loading, error }: CityMapProps) {
 
   // Group alerts by node_id and take ONLY latest alert per node
   const getLatestAlertPerNode = (): NodeStatus[] => {
+    if (!Array.isArray(alerts) || alerts.length === 0) {
+      return [];
+    }
+
     const nodeMap = new Map<string, Alert>();
 
     // Sort by timestamp descending to get latest first
@@ -41,13 +45,13 @@ export function CityMap({ alerts, loading, error }: CityMapProps) {
     }
 
     return Array.from(nodeMap.values()).map((alert) => ({
-      node_id: alert.node_id,
-      node_name: alert.node_name,
-      region: alert.region,
-      alert_level: alert.alert_level,
-      severity_score: alert.severity_score,
-      primary_reason: alert.primary_reason,
-      timestamp: alert.timestamp,
+      node_id: alert.node_id ?? "Unknown",
+      node_name: alert.node_name ?? "Unknown",
+      region: alert.region ?? "Unknown",
+      alert_level: alert.alert_level ?? "CLEAN",
+      severity_score: alert.severity_score ?? 0,
+      primary_reason: alert.primary_reason ?? null,
+      timestamp: alert.timestamp ?? "",
     }));
   };
 

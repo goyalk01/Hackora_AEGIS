@@ -105,47 +105,56 @@ export function MetricsCards({ metrics, loading, error }: MetricsCardsProps) {
     );
   }
 
+  // Defensive null coalescing for all numeric values
+  const totalLogs = metrics.total_logs ?? 0;
+  const attackCount = metrics.attack_count ?? 0;
+  const attackPercentage = metrics.attack_percentage ?? 0;
+  const highRiskCount = metrics.high_risk_count ?? 0;
+  const suspiciousCount = metrics.suspicious_count ?? 0;
+  const cleanCount = metrics.clean_count ?? 0;
+  const threatPercentage = metrics.threat_percentage ?? 0;
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
       <Card
         title="Total Logs"
-        value={metrics.total_logs}
+        value={totalLogs}
         subtitle="Processed entries"
         icon={<FileText className="w-5 h-5" />}
       />
       <Card
         title="Attacks"
-        value={metrics.attack_count}
-        subtitle={`${metrics.attack_percentage.toFixed(1)}% of total`}
+        value={attackCount}
+        subtitle={`${attackPercentage.toFixed(1)}% of total`}
         icon={<ShieldAlert className="w-5 h-5" />}
         variant="danger"
       />
       <Card
         title="High Risk"
-        value={metrics.high_risk_count}
+        value={highRiskCount}
         subtitle="Elevated threats"
         icon={<AlertTriangle className="w-5 h-5" />}
         variant="warning"
       />
       <Card
         title="Suspicious"
-        value={metrics.suspicious_count}
+        value={suspiciousCount}
         subtitle="Under monitoring"
         icon={<Activity className="w-5 h-5" />}
       />
       <Card
         title="Clean"
-        value={metrics.clean_count}
+        value={cleanCount}
         subtitle="Normal operations"
         icon={<Server className="w-5 h-5" />}
         variant="success"
       />
       <Card
         title="Threat Rate"
-        value={`${metrics.threat_percentage.toFixed(1)}%`}
+        value={`${threatPercentage.toFixed(1)}%`}
         subtitle="Attack + High Risk"
         icon={<TrendingUp className="w-5 h-5" />}
-        variant={metrics.threat_percentage > 30 ? "danger" : "default"}
+        variant={threatPercentage > 30 ? "danger" : "default"}
       />
     </div>
   );

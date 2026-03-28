@@ -1,7 +1,7 @@
 import { Alert, AlertsResponse, Metrics, Summary } from "@/types";
 import { validateAlertLevel, safeNumber, safePercentage, safePositiveInt } from "./utils";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
 
 interface ApiResponse<T> {
   status: "success" | "error";
@@ -18,6 +18,7 @@ async function fetchApi<T>(
   options?: RequestInit
 ): Promise<T> {
   if (!BASE_URL) {
+    console.error("[API] NEXT_PUBLIC_API_URL is not defined");
     throw new Error("NEXT_PUBLIC_API_URL is not defined");
   }
 
@@ -29,9 +30,22 @@ async function fetchApi<T>(
     },
   });
 
-  const json: ApiResponse<T> = await res.json();
+  let json: ApiResponse<T> | null = null;
+  try {
+    json = (await res.json()) as ApiResponse<T>;
+  } catch {
+    throw new Error(`[API] ${endpoint} returned non-JSON response (HTTP ${res.status})`);
+  }
+
+  // Debug logging to trace contract shape in browser devtools.
+  console.log(`[API] RESPONSE ${endpoint}:`, json);
+
+  if (!res.ok) {
+    throw new Error(json.message || `[API] ${endpoint} failed with HTTP ${res.status}`);
+  }
 
   if (json.status === "error") {
+    console.error(`[API] Error on ${endpoint}:`, json.message);
     throw new Error(json.message || "API request failed");
   }
 

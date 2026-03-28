@@ -27,6 +27,10 @@ interface ChartData {
 export function Heatmap({ alerts, loading, error }: HeatmapProps) {
   // Group by node_id and take latest alert's response_time_ms
   const getChartData = (): ChartData[] => {
+    if (!Array.isArray(alerts) || alerts.length === 0) {
+      return [];
+    }
+
     const nodeMap = new Map<string, Alert>();
 
     const sortedAlerts = [...alerts].sort(
@@ -41,9 +45,9 @@ export function Heatmap({ alerts, loading, error }: HeatmapProps) {
 
     return Array.from(nodeMap.values())
       .map((alert) => ({
-        node_id: alert.node_id,
-        response_time_ms: alert.source_data.response_time_ms,
-        alert_level: alert.alert_level,
+        node_id: alert.node_id ?? "Unknown",
+        response_time_ms: alert.source_data?.response_time_ms ?? 0,
+        alert_level: alert.alert_level ?? "CLEAN",
       }))
       .filter((d) => d.response_time_ms > 0)
       .sort((a, b) => b.response_time_ms - a.response_time_ms);

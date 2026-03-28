@@ -20,18 +20,23 @@ export function AlertsTable({ alerts, loading, error }: AlertsTableProps) {
   const [filter, setFilter] = useState("");
   const [limit, setLimit] = useState(50);
 
-  // Filter alerts locally
+  // Filter alerts locally with defensive null check
   const filteredAlerts = useMemo(() => {
-    let result = alerts;
+    // Ensure alerts is always an array
+    const safeAlerts = Array.isArray(alerts) ? alerts : [];
+    let result = safeAlerts;
 
     // Apply level filter
     if (filter) {
-      result = result.filter((alert) => alert.alert_level === filter);
+      result = result.filter((alert) => alert?.alert_level === filter);
     }
 
     // Apply limit
     return result.slice(0, limit);
   }, [alerts, filter, limit]);
+
+  // Safe length for display
+  const totalAlerts = Array.isArray(alerts) ? alerts.length : 0;
 
   const handleFilterChange = (level: string) => {
     setFilter(level === "ALL" ? "" : level);
@@ -61,7 +66,7 @@ export function AlertsTable({ alerts, loading, error }: AlertsTableProps) {
           <List className="w-5 h-5 text-muted-foreground" />
           <h3 className="text-lg font-semibold text-foreground">Alert Log</h3>
           <span className="text-sm text-muted-foreground">
-            ({filteredAlerts.length} of {alerts.length})
+            ({filteredAlerts.length} of {totalAlerts})
           </span>
         </div>
 
@@ -244,19 +249,19 @@ export function AlertsTable({ alerts, loading, error }: AlertsTableProps) {
                         <div
                           className={cn(
                             "h-full rounded-full transition-all",
-                            alert.severity_score >= 80
+                            (alert.severity_score ?? 0) >= 80
                               ? "bg-red-500"
-                              : alert.severity_score >= 50
+                              : (alert.severity_score ?? 0) >= 50
                               ? "bg-orange-500"
-                              : alert.severity_score >= 25
+                              : (alert.severity_score ?? 0) >= 25
                               ? "bg-yellow-500"
                               : "bg-green-500"
                           )}
-                          style={{ width: `${alert.severity_score}%` }}
+                          style={{ width: `${alert.severity_score ?? 0}%` }}
                         />
                       </div>
                       <span className="text-sm text-foreground font-medium">
-                        {alert.severity_score}
+                        {alert.severity_score ?? 0}
                       </span>
                     </div>
                   </td>

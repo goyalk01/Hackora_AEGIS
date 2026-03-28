@@ -55,11 +55,19 @@ export function SummaryPanel({ summary, loading, error }: SummaryPanelProps) {
     );
   }
 
+  // Defensive null coalescing for all numeric values
+  const attackCount = summary.metrics?.attack_count ?? 0;
+  const highRiskCount = summary.metrics?.high_risk_count ?? 0;
+  const suspiciousCount = summary.metrics?.suspicious_count ?? 0;
+  const cleanCount = summary.metrics?.clean_count ?? 0;
+  const attackPercentage = summary.metrics?.attack_percentage ?? 0;
+  const totalNodes = summary.metrics?.total_nodes ?? 0;
+  const criticalCount = summary.critical_alerts?.count ?? 0;
+  const criticalAlertsList = summary.critical_alerts?.alerts ?? [];
+  const nodesUnderAttack = summary.nodes_under_attack ?? [];
+
   // Calculate total alerts safely
-  const totalAlerts = summary.metrics.attack_count +
-                      summary.metrics.high_risk_count +
-                      summary.metrics.suspicious_count +
-                      summary.metrics.clean_count;
+  const totalAlerts = attackCount + highRiskCount + suspiciousCount + cleanCount;
 
   return (
     <div className="space-y-4">
@@ -71,18 +79,18 @@ export function SummaryPanel({ summary, loading, error }: SummaryPanelProps) {
             <h3 className="text-lg font-semibold text-foreground">Critical Alerts</h3>
           </div>
           <span className="px-2.5 py-1 rounded-full bg-red-500/10 text-red-500 text-sm font-medium">
-            {summary.critical_alerts.count} active
+            {criticalCount} active
           </span>
         </div>
 
         <div className="divide-y divide-border max-h-80 overflow-y-auto">
-          {summary.critical_alerts.alerts.length === 0 ? (
+          {criticalAlertsList.length === 0 ? (
             <div className="p-6 text-center">
               <Shield className="w-8 h-8 text-green-500 mx-auto mb-2" />
               <p className="text-muted-foreground">No critical alerts</p>
             </div>
           ) : (
-            summary.critical_alerts.alerts.map((alert) => (
+            criticalAlertsList.map((alert) => (
               <div
                 key={alert.log_id}
                 className="p-4 hover:bg-muted/30 transition-colors"
@@ -136,19 +144,19 @@ export function SummaryPanel({ summary, loading, error }: SummaryPanelProps) {
             <h3 className="font-semibold text-foreground">Nodes Under Attack</h3>
           </div>
           <span className="text-sm text-muted-foreground">
-            {summary.nodes_under_attack.length} nodes
+            {nodesUnderAttack.length} nodes
           </span>
         </div>
 
         <div className="p-4">
-          {summary.nodes_under_attack.length === 0 ? (
+          {nodesUnderAttack.length === 0 ? (
             <div className="text-center py-4">
               <Shield className="w-8 h-8 text-green-500 mx-auto mb-2" />
               <p className="text-muted-foreground text-sm">All nodes secure</p>
             </div>
           ) : (
             <div className="flex flex-wrap gap-2">
-              {summary.nodes_under_attack.map((node) => (
+              {nodesUnderAttack.map((node) => (
                 <span
                   key={node}
                   className="px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm font-medium"
@@ -173,35 +181,35 @@ export function SummaryPanel({ summary, loading, error }: SummaryPanelProps) {
         {totalAlerts > 0 ? (
           <>
             <div className="flex h-4 rounded-full overflow-hidden bg-muted">
-              {summary.metrics.attack_count > 0 && (
+              {attackCount > 0 && (
                 <div
                   className="bg-red-500 transition-all"
                   style={{
-                    width: `${(summary.metrics.attack_count / totalAlerts) * 100}%`,
+                    width: `${(attackCount / totalAlerts) * 100}%`,
                   }}
                 />
               )}
-              {summary.metrics.high_risk_count > 0 && (
+              {highRiskCount > 0 && (
                 <div
                   className="bg-orange-500 transition-all"
                   style={{
-                    width: `${(summary.metrics.high_risk_count / totalAlerts) * 100}%`,
+                    width: `${(highRiskCount / totalAlerts) * 100}%`,
                   }}
                 />
               )}
-              {summary.metrics.suspicious_count > 0 && (
+              {suspiciousCount > 0 && (
                 <div
                   className="bg-yellow-500 transition-all"
                   style={{
-                    width: `${(summary.metrics.suspicious_count / totalAlerts) * 100}%`,
+                    width: `${(suspiciousCount / totalAlerts) * 100}%`,
                   }}
                 />
               )}
-              {summary.metrics.clean_count > 0 && (
+              {cleanCount > 0 && (
                 <div
                   className="bg-green-500 transition-all"
                   style={{
-                    width: `${(summary.metrics.clean_count / totalAlerts) * 100}%`,
+                    width: `${(cleanCount / totalAlerts) * 100}%`,
                   }}
                 />
               )}
@@ -210,19 +218,19 @@ export function SummaryPanel({ summary, loading, error }: SummaryPanelProps) {
             <div className="grid grid-cols-2 gap-2 mt-3 text-xs">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
-                <span>Attack: {summary.metrics.attack_count}</span>
+                <span>Attack: {attackCount}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-orange-500" />
-                <span>High Risk: {summary.metrics.high_risk_count}</span>
+                <span>High Risk: {highRiskCount}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
-                <span>Suspicious: {summary.metrics.suspicious_count}</span>
+                <span>Suspicious: {suspiciousCount}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-green-500" />
-                <span>Clean: {summary.metrics.clean_count}</span>
+                <span>Clean: {cleanCount}</span>
               </div>
             </div>
           </>
@@ -238,13 +246,13 @@ export function SummaryPanel({ summary, loading, error }: SummaryPanelProps) {
         <div className="grid grid-cols-2 gap-4">
           <div className="text-center">
             <p className="text-2xl font-bold text-foreground">
-              {summary.metrics.attack_percentage.toFixed(1)}%
+              {attackPercentage.toFixed(1)}%
             </p>
             <p className="text-xs text-muted-foreground">Attack Rate</p>
           </div>
           <div className="text-center">
             <p className="text-2xl font-bold text-foreground">
-              {summary.metrics.total_nodes}
+              {totalNodes}
             </p>
             <p className="text-xs text-muted-foreground">Total Nodes</p>
           </div>
