@@ -59,22 +59,22 @@ Modern infrastructure generates telemetry across dozens of schema versions, regi
 AEGIS follows a strict 4-step pipeline. Each step is a separate module with a single responsibility. Data flows forward — never backward.
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        AEGIS PIPELINE                               │
-│                                                                     │
-│  ┌──────────┐   ┌──────────────┐   ┌──────────┐   ┌─────────────┐ │
-│  │  STEP 1  │──▶│    STEP 2    │──▶│  STEP 3  │──▶│   STEP 4    │ │
-│  │  Loader  │   │  Normalizer  │   │ Detector │   │     API     │ │
-│  │  + CSV   │   │  + Schema    │   │ + Rules  │   │  + FastAPI  │ │
-│  │  Import  │   │    Mapper    │   │ + Scorer  │   │  + Service  │ │
-│  └──────────┘   └──────────────┘   └──────────┘   └──────┬──────┘ │
+┌────────────────────────────────────────────────────────────────────┐
+│                        AEGIS PIPELINE                              │
+│                                                                    │
+│  ┌──────────┐   ┌──────────────┐   ┌──────────┐   ┌─────────────┐  │
+│  │  STEP 1  │──▶│    STEP 2   │──▶│  STEP 3 │──▶│   STEP 4    │  │
+│  │  Loader  │   │  Normalizer  │   │ Detector │   │     API     │  │
+│  │  + CSV   │   │  + Schema    │   │ + Rules  │   │  + FastAPI  │  │
+│  │  Import  │   │    Mapper    │   │ + Scorer │   │  + Service  │  │
+│  └──────────┘   └──────────────┘   └──────────┘   └──────┬──────┘  │
 │                                                           │        │
 │                                                    ┌──────▼──────┐ │
 │                                                    │   STEP 5    │ │
 │                                                    │  Dashboard  │ │
 │                                                    │  (Next.js)  │ │
 │                                                    └─────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
+└────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Step 1 — Data Engineering (`loader.py` + `import_aegis_csv.py`)
@@ -588,8 +588,11 @@ Runs the full normalization pipeline against live data and prints each normalize
 ## 👨‍💻 Authors
 
 **Krish Goyal**
+---
 **Abhinav Atul**
+---
 **Akshat Singh**
+---
 **Sejal Mishra**
 
 ---
