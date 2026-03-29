@@ -18,7 +18,7 @@ export function AlertsTable({ alerts, loading, error }: AlertsTableProps) {
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [showLimitDropdown, setShowLimitDropdown] = useState(false);
   const [filter, setFilter] = useState("");
-  const [limit, setLimit] = useState(50);
+  const [limit, setLimit] = useState(10);
 
   // Filter alerts locally with defensive null check
   const filteredAlerts = useMemo(() => {
