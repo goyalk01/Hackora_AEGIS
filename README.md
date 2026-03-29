@@ -587,13 +587,10 @@ Runs the full normalization pipeline against live data and prints each normalize
 
 ## 👨‍💻 Authors
 
-**Krish Goyal**
----
-**Abhinav Atul**
----
-**Akshat Singh**
----
-**Sejal Mishra**
+- **Krish Goyal**
+- **Abhinav Atul**
+- **Akshat Singh**
+- **Sejal Mishra**
 
 ---
 
