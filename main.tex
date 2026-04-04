@@ -1,0 +1,1101 @@
+\documentclass[12pt,a4paper]{article}
+
+% ─── Packages ───────────────────────────────────────────────────────────────
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{titlesec}
+\usepackage{titling}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{microtype}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{float}
+\usepackage{mdframed}
+\usepackage{fontenc}
+\usepackage{inputenc}
+\usepackage{lmodern}
+
+% ─── Colors ─────────────────────────────────────────────────────────────────
+\definecolor{aegisblue}{RGB}{10, 55, 120}
+\definecolor{accentred}{RGB}{180, 30, 30}
+\definecolor{lightgray}{RGB}{245, 245, 245}
+\definecolor{codegray}{RGB}{230, 230, 230}
+\definecolor{darkgray}{RGB}{60, 60, 60}
+\definecolor{green}{RGB}{20, 120, 60}
+
+% ─── Hyperref Setup ──────────────────────────────────────────────────────────
+\hypersetup{
+    colorlinks=true,
+    linkcolor=aegisblue,
+    urlcolor=aegisblue,
+    citecolor=aegisblue,
+    pdftitle={AEGIS -- Cyber-Infrastructure Defense System},
+    pdfauthor={Krish Goyal, Abhinav Atul, Akshat Singh, Sejal Mishra}
+}
+
+% ─── Section Formatting ──────────────────────────────────────────────────────
+\titleformat{\section}{\large\bfseries\color{aegisblue}}{{\thesection.}}{0.5em}{}[\titlerule]
+\titleformat{\subsection}{\normalsize\bfseries\color{darkgray}}{\thesubsection.}{0.5em}{}
+\titleformat{\subsubsection}{\normalsize\itshape\color{darkgray}}{\thesubsubsection.}{0.5em}{}
+
+% ─── Header / Footer ─────────────────────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textcolor{aegisblue}{\textbf{AEGIS} --- Cyber-Infrastructure Defense System}}
+\fancyhead[R]{\small\textcolor{darkgray}{Rosetta Code Hackathon}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ─── Listings (code blocks) ───────────────────────────────────────────────────
+\lstset{
+    backgroundcolor=\color{lightgray},
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{codegray},
+    keywordstyle=\color{aegisblue}\bfseries,
+    commentstyle=\color{green}\itshape,
+    stringstyle=\color{accentred},
+    numbers=left,
+    numberstyle=\tiny\color{darkgray},
+    numbersep=5pt,
+    tabsize=2
+}
+
+% ─── Callout Box ─────────────────────────────────────────────────────────────
+\newmdenv[
+  linecolor=aegisblue,
+  backgroundcolor=lightgray,
+  linewidth=1.5pt,
+  leftmargin=0pt,
+  rightmargin=0pt,
+  innertopmargin=6pt,
+  innerbottommargin=6pt,
+  innerleftmargin=10pt,
+  innerrightmargin=10pt
+]{infobox}
+
+% ─── Title Page ──────────────────────────────────────────────────────────────
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    \vspace*{1.5cm}
+
+    {\Huge\bfseries\color{aegisblue} AEGIS}\\[0.4cm]
+    {\Large\bfseries\color{darkgray} Advanced Enforcement \& Guardian Infrastructure System}\\[0.8cm]
+    \rule{\linewidth}{1pt}\\[0.6cm]
+    {\large\itshape Rosetta Code Hackathon --- Technical Report}\\[0.4cm]
+    \rule{\linewidth}{0.5pt}\\[1.6cm]
+
+    {\large\bfseries Team Members}\\[0.5cm]
+    \begin{tabular}{c}
+        \large Krish Goyal \\[4pt]
+        \large Abhinav Atul \\[4pt]
+        \large Akshat Singh \\[4pt]
+        \large Sejal Mishra \\
+    \end{tabular}
+
+    \vfill
+
+    {\large\bfseries Submission Date}\\[0.3cm]
+    {\large \today}\\[1.5cm]
+
+    \begin{infobox}
+        \centering
+        \textit{``Decoding chaos. Delivering structured truth. Defending infrastructure.''}
+    \end{infobox}
+\end{titlepage}
+
+\newpage
+\tableofcontents
+\newpage
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Abstract}
+% ─────────────────────────────────────────────────────────────────────────────
+
+Modern cyber-infrastructure environments generate heterogeneous, high-volume telemetry across distributed nodes operating under multiple schema versions. The fundamental challenge lies not in data volume, but in extracting reliable, actionable intelligence from inconsistent, multi-schema data streams that contain genuine threats obscured by structural noise and schema drift.
+
+\textbf{AEGIS} (Advanced Enforcement \& Guardian Infrastructure System) addresses this challenge through a deterministic, multi-stage defense pipeline engineered for the Rosetta Code Hackathon. The system ingests fragmented infrastructure logs across three distinct schema versions, normalizes them into a unified canonical representation, applies a precision-engineered 7-rule detection engine with severity and confidence scoring, and surfaces prioritized alerts through a real-time analytical dashboard.
+
+The core engineering insight: \textit{decode chaos into structured, corrected truth}. AEGIS employs transparent, auditable rule-based detection rather than opaque ML models, ensuring that every alert is explainable, every classification is reproducible, and every threshold is verifiable. The system safely decodes and scans Base64-encoded hardware identifiers for malicious signatures---without ever executing decoded content---demonstrating security-first design.
+
+\textbf{Key Deliverables:}
+\begin{itemize}[noitemsep]
+    \item \textbf{Zero-dependency detection engine} using only Python Standard Library
+    \item \textbf{Schema-aware normalization} handling v1/v2/v3 field mappings with sentinel-value fault tolerance
+    \item \textbf{5-stage Base64 malware scanning pipeline} with 12 threat signatures
+    \item \textbf{FastAPI REST backend} with 6 endpoints, standardized response envelopes, and Swagger documentation
+    \item \textbf{Next.js 14 dashboard} with 8 components, auto-refresh, forensic topology map, and dual-theme support
+    \item \textbf{9-case test suite} validating all classification paths with deterministic expected outputs
+\end{itemize}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Introduction}
+% ─────────────────────────────────────────────────────────────────────────────
+
+Cyber-infrastructure defense has become one of the most operationally critical disciplines in modern distributed systems. As infrastructure scales, the attack surface expands proportionally. Intrusion detection, anomaly classification, and rapid incident triage are no longer optional capabilities---they are fundamental requirements for production-grade systems.
+
+The primary barrier to effective defense is not data scarcity. Modern infrastructure generates abundant telemetry: HTTP status codes, response latencies, node health reports, and encoded payloads. The real barrier is \textit{signal interpretation under schema inconsistency}:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Schema drift:} Different API versions emit logs with different field names (\texttt{http\_code} vs \texttt{response\_code}, \texttt{latency} vs \texttt{response\_ms})
+    \item \textbf{Deceptive nodes:} Compromised infrastructure may report \texttt{OPERATIONAL} status while returning HTTP 500 errors---a contradiction that naive parsers miss
+    \item \textbf{Hidden payloads:} Base64-encoded hardware identifiers can conceal malware signatures that require safe decode-and-scan pipelines
+    \item \textbf{Missing fields:} Real-world logs contain nulls, absent keys, and sentinel values that cascade into false positives if handled incorrectly
+\end{itemize}
+
+AEGIS was engineered to solve these problems within hackathon constraints: building a complete, technically rigorous, and demonstrably correct system under time pressure. The solution prioritizes determinism, transparency, and correctness---qualities that matter both in competition scoring and in production deployment.
+
+\subsection{Hackathon Alignment}
+
+The Rosetta Code Hackathon challenges participants to build systems that process, decode, and correct data while demonstrating engineering maturity. AEGIS aligns directly:
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\linewidth}{>{\bfseries}l X}
+\toprule
+Hackathon Theme & AEGIS Implementation \\
+\midrule
+Data Decoding & 5-stage Base64 validation with UTF-8 extraction and malware scanning \\
+Data Correction & Schema normalization across v1/v2/v3 with sentinel-value recovery \\
+Structured Truth & Deterministic 7-rule detection engine producing consistent, auditable alerts \\
+System Maturity & Full-stack deployment: FastAPI + Next.js + test suite + production configs \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Scope}
+
+This report documents the complete technical design and implementation:
+
+\begin{itemize}[noitemsep]
+    \item Data engineering: schema normalization, Base64 validation, fault-tolerant ingestion
+    \item Detection engine: 7-rule evaluator, severity/confidence scoring, priority classification
+    \item API layer: FastAPI with CORS, Swagger, standardized response envelopes
+    \item Frontend dashboard: Next.js 14 with 8 components, auto-refresh, interactive topology map
+    \item Performance characteristics
+    \item Security and reliability considerations
+\end{itemize}
+
+    \item Testing methodology: 9-case unit test suite with deterministic validation
+    \item Performance analysis: algorithmic complexity and optimization techniques
+\end{itemize}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Problem Statement}
+% ─────────────────────────────────────────────────────────────────────────────
+
+The hackathon challenge requires building a system that processes raw, inconsistently structured cyber-infrastructure logs and produces reliable, corrected threat detections. The problem presents several compounding difficulties that AEGIS systematically addresses:
+
+\subsection{Schema Inconsistency}
+
+Incoming telemetry arrives in three distinct schema versions with different field names:
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\linewidth}{l l l l}
+\toprule
+\textbf{Canonical Field} & \textbf{v1 Field} & \textbf{v2 Field} & \textbf{v3 Field} \\
+\midrule
+\texttt{http\_status} & \texttt{http\_code} & \texttt{response\_code} & \texttt{status\_code} \\
+\texttt{response\_time\_ms} & \texttt{latency} & \texttt{response\_ms} & \texttt{latency\_ms} \\
+\texttt{reported\_status} & \texttt{status} & \texttt{node\_status} & \texttt{health\_status} \\
+\bottomrule
+\end{tabularx}
+\caption{Schema version field name mapping}
+\end{table}
+
+A naive parser assuming a single schema fails silently, producing incorrect classifications. AEGIS solves this with a \texttt{field\_map} lookup system that dynamically routes canonical field extraction through schema-specific mappings.
+
+\subsection{Missing and Corrupted Fields}
+
+Real-world telemetry contains missing values, null entries, and malformed data. AEGIS uses \textbf{sentinel values} (\texttt{-1} for missing integers) rather than null, ensuring:
+
+\begin{enumerate}[noitemsep]
+    \item Type-safe numeric comparisons throughout the detection engine
+    \item Explicit detection rules for missing fields (e.g., \texttt{unknown\_http\_status} rule triggers on sentinel)
+    \item No null-pointer exceptions cascading through the pipeline
+\end{enumerate}
+
+\subsection{Deceptive Node Detection}
+
+Compromised nodes often report false health status. A node claiming \texttt{OPERATIONAL} while returning HTTP 500 responses represents a \textbf{status contradiction}---a signature of active deception that AEGIS explicitly detects as an ATTACK-level threat.
+
+\subsection{Hidden Malicious Payloads}
+
+Base64-encoded hardware identifiers can conceal malware signatures. AEGIS implements a 5-stage safe-decode pipeline:
+
+\begin{enumerate}[noitemsep]
+    \item Existence check (non-null, non-empty)
+    \item Format validation (valid Base64 character set)
+    \item Decode attempt with padding correction
+    \item UTF-8 conversion (binary payloads flagged)
+    \item Keyword scan against 12 threat signatures (MALWARE, EXPLOIT, BACKDOOR, etc.)
+\end{enumerate}
+
+\begin{infobox}
+\textbf{Security Guarantee:} Decoded payloads are stored as evidence strings only. They are \textbf{never} passed to \texttt{eval()}, \texttt{exec()}, or any code execution path.
+\end{infobox}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{System Architecture}
+% ─────────────────────────────────────────────────────────────────────────────
+
+AEGIS implements a strict 5-stage linear pipeline with single-responsibility modules. Data flows forward only---no circular dependencies, no state leakage between stages.
+
+\subsection{Pipeline Overview}
+
+\begin{infobox}
+\begin{verbatim}
+ ┌─────────────────────────────────────────────────────────────────┐
+ │                        AEGIS PIPELINE                           │
+ │                                                                 │
+ │  ┌──────────────┐   ┌──────────────┐   ┌──────────────┐        │
+ │  │   STAGE 1    │──▶│   STAGE 2    │──▶│   STAGE 3    │        │
+ │  │   Loader     │   │  Normalizer  │   │   Detector   │        │
+ │  │   (loader.py)│   │(normalizer.py)│   │ (detector.py)│        │
+ │  └──────────────┘   └──────────────┘   └──────┬───────┘        │
+ │         │                  │                   │                │
+ │    Load JSON          Schema Map          7 Rules               │
+ │    Validate           Field Extract       Severity              │
+ │    Required Keys      Base64 Scan         Confidence            │
+ │                       Sentinels           Priority              │
+ │                                                │                │
+ │                                         ┌──────▼───────┐        │
+ │                                         │   STAGE 4    │        │
+ │                                         │   FastAPI    │        │
+ │                                         │   (app.py)   │        │
+ │                                         └──────┬───────┘        │
+ │                                                │                │
+ │                                         ┌──────▼───────┐        │
+ │                                         │   STAGE 5    │        │
+ │                                         │  Dashboard   │        │
+ │                                         │  (Next.js)   │        │
+ │                                         └──────────────┘        │
+ └─────────────────────────────────────────────────────────────────┘
+\end{verbatim}
+\end{infobox}
+
+\subsection{Technology Stack}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\linewidth}{>{\bfseries}l X}
+\toprule
+Layer & Technology \\
+\midrule
+Data Processing & Python 3.10+ (Standard Library only: \texttt{json}, \texttt{base64}, \texttt{re}, \texttt{datetime}) \\
+Detection Engine & Pure Python rule-based evaluators with zero ML dependencies \\
+API Layer & FastAPI 0.100+ with uvicorn ASGI server, automatic OpenAPI/Swagger \\
+Frontend & Next.js 14 (App Router), TypeScript, Tailwind CSS 3.4, Recharts \\
+Deployment & Render (backend), Vercel (frontend), CORS-enabled \\
+\bottomrule
+\end{tabularx}
+\caption{AEGIS technology stack}
+\end{table}
+
+\subsection{Module Responsibilities}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\linewidth}{>{\ttfamily}l X}
+\toprule
+Module & Responsibility \\
+\midrule
+loader.py & Load \& validate 3 JSON datasets; return empty list on failure \\
+normalizer.py & Build O(1) lookup maps; extract fields via schema mapping; decode Base64 \\
+utils.py & Safe type casting; Base64 validation pipeline; malware keyword scanner \\
+rules.py & Centralized thresholds; severity base scores; per-rule bonus configuration \\
+evaluator.py & 7 pure-function rule evaluators; returns (triggered, reason) tuples \\
+detector.py & Alert builder; severity/confidence computation; batch processing \\
+app.py & FastAPI application; CORS middleware; Swagger documentation \\
+routes.py & HTTP endpoint definitions; query parameter handling \\
+service.py & Business logic; file I/O; response envelope construction \\
+\bottomrule
+\end{tabularx}
+\caption{Backend module responsibilities}
+\end{table}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Data Engineering}
+% ─────────────────────────────────────────────────────────────────────────────
+
+The data engineering layer is the foundation of pipeline correctness. Schema errors at this stage propagate through every downstream component, making robust normalization a first-class engineering priority.
+
+\subsection{Schema Normalization Architecture}
+
+AEGIS handles three distinct schema versions using a \texttt{field\_map} lookup system stored in \texttt{schema\_versions.json}:
+
+\begin{lstlisting}[language=Python, caption={Schema version field map structure}]
+{
+  "version": 1,
+  "field_map": {
+    "http_status": "http_code",
+    "response_time_ms": "latency",
+    "reported_status": "status"
+  }
+}
+\end{lstlisting}
+
+The normalization flow:
+\begin{enumerate}[noitemsep]
+    \item \textbf{Build lookup maps} (O(n) once): \texttt{node\_registry} $\rightarrow$ hash map by \texttt{node\_id}; \texttt{schema\_versions} $\rightarrow$ hash map by version number
+    \item \textbf{Extract schema version} from each log record
+    \item \textbf{Route field extraction} through the appropriate \texttt{field\_map}
+    \item \textbf{Apply type-safe casting} with sentinel defaults
+\end{enumerate}
+
+\subsection{Canonical Normalized Record}
+
+Every log is transformed into this unified structure:
+
+\begin{lstlisting}[language=Python, caption={Normalized log structure}]
+{
+    "log_id": str,              # Unique identifier
+    "node_id": str,             # Infrastructure node
+    "node_name": str,           # Human-readable name
+    "region": str,              # Geographic region
+    "schema_version": int,      # Source schema version
+    "schema_known": bool,       # True if version in registry
+    "reported_status": str,     # Node-reported health
+    "http_status": int,         # HTTP code (-1 = missing)
+    "response_time_ms": int,    # Latency (-1 = missing)
+    "hardware_id_b64": str,     # Raw Base64 string
+    "hardware_id_valid": bool,  # Decode + scan result
+    "hardware_id_decoded": str, # Decoded text (evidence)
+    "hardware_id_reason": str,  # Failure reason if invalid
+    "timestamp": str,           # ISO-8601 timestamp
+    "parse_warnings": [str]     # Soft errors (non-fatal)
+}
+\end{lstlisting}
+
+\subsection{Sentinel Value Strategy}
+
+Missing numeric fields receive sentinel value \texttt{-1} rather than null. This design enables:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Type-safe comparisons}: All threshold checks remain integer operations
+    \item \textbf{Explicit missing-field detection}: The \texttt{unknown\_http\_status} rule triggers when \texttt{http\_status == -1}
+    \item \textbf{Downstream safety}: No null-pointer exceptions in the detection engine
+\end{itemize}
+
+\subsection{Base64 Validation Pipeline}
+
+Hardware ID validation implements defense-in-depth:
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\linewidth}{l X l}
+\toprule
+\textbf{Stage} & \textbf{Check} & \textbf{Failure Action} \\
+\midrule
+1 & Existence (non-null, non-empty) & Flag invalid, set reason \\
+2 & Character set (\texttt{[A-Za-z0-9+/]=*}) & Flag invalid, preserve original \\
+3 & Decode with padding correction & Flag invalid, log decode error \\
+4 & UTF-8 conversion & Flag as binary payload \\
+5 & Keyword scan (12 signatures) & Flag malicious, store decoded evidence \\
+\bottomrule
+\end{tabularx}
+\caption{Base64 validation stages}
+\end{table}
+
+\textbf{Malicious keyword signatures:} MALWARE, PAYLOAD, EXPLOIT, INJECT, SHELL, CMD, EXEC, BACKDOOR, ROOTKIT, TROJAN, RANSOMWARE, KEYLOG
+
+\subsection{Fault Tolerance}
+
+The normalization layer is designed to be \textbf{non-crashing}:
+
+\begin{itemize}[noitemsep]
+    \item All field accesses use \texttt{safe\_get()} with explicit defaults
+    \item Unknown schema versions fall back to v1 field maps with a warning
+    \item Individual record failures are isolated; bad records are skipped, not fatal
+    \item Soft errors (missing non-critical fields) are logged to \texttt{parse\_warnings[]} and processing continues
+\end{itemize}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Detection Engine}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{Design Philosophy}
+
+The detection engine is deliberately rule-based with \textbf{zero machine learning dependencies}. This choice was made for three reasons critical to hackathon success:
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Auditability}: Every detection traces to a specific rule and threshold---judges can verify correctness
+    \item \textbf{Determinism}: Identical inputs produce identical outputs---test cases have stable expected results
+    \item \textbf{Transparency}: No black-box models---the system's behavior is fully explainable
+\end{enumerate}
+
+\subsection{Rule Registry}
+
+AEGIS implements 7 detection rules, each as a pure function in \texttt{evaluator.py}:
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\linewidth}{>{\ttfamily}l l X}
+\toprule
+Rule ID & Level & Trigger Condition \\
+\midrule
+status\_contradiction & ATTACK & \texttt{reported\_status == "OPERATIONAL" \&\& http\_status >= 400} \\
+server\_error & ATTACK & \texttt{http\_status >= 500} \\
+invalid\_hardware\_id & ATTACK & \texttt{hardware\_id\_valid == False} \\
+unknown\_http\_status & ATTACK & \texttt{http\_status == -1} (sentinel) \\
+extreme\_latency & HIGH\_RISK & \texttt{response\_time\_ms >= 3000} \\
+elevated\_latency & SUSPICIOUS & \texttt{1500 <= response\_time\_ms < 3000} \\
+schema\_unknown & INFO & \texttt{schema\_known == False} (reason only) \\
+\bottomrule
+\end{tabularx}
+\caption{AEGIS detection rules}
+\end{table}
+
+\subsection{Mutually Exclusive Latency Rules}
+
+A critical implementation detail: \texttt{elevated\_latency} fires \textbf{only} in the 1500--2999ms band. The \texttt{extreme\_latency} rule handles $\geq$3000ms exclusively. This prevents double-firing and ensures a log with 3500ms latency triggers only HIGH\_RISK (not both HIGH\_RISK and SUSPICIOUS).
+
+\subsection{Priority Classification}
+
+The engine walks priority order \texttt{ATTACK $\rightarrow$ HIGH\_RISK $\rightarrow$ SUSPICIOUS $\rightarrow$ CLEAN} and returns the \textbf{first level} with at least one triggered rule:
+
+\begin{lstlisting}[language=Python, caption={Priority determination logic}]
+def determine_level(triggered_rules):
+    if any(rule_id in triggered_rules for rule_id in ATTACK_RULES):
+        return "ATTACK"
+    if any(rule_id in triggered_rules for rule_id in HIGH_RISK_RULES):
+        return "HIGH_RISK"
+    if any(rule_id in triggered_rules for rule_id in SUSPICIOUS_RULES):
+        return "SUSPICIOUS"
+    return "CLEAN"
+\end{lstlisting}
+
+\subsection{Severity Scoring}
+
+Each alert level has a base score, with per-rule bonuses stacking additively:
+
+\begin{align}
+\text{severity\_score} &= \min(\text{base\_score} + \sum_{r \in \text{triggered}} \text{bonus}_r, 100)
+\end{align}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l c | l c}
+\toprule
+\textbf{Alert Level} & \textbf{Base Score} & \textbf{Rule ID} & \textbf{Bonus} \\
+\midrule
+ATTACK & 80 & status\_contradiction & +10 \\
+HIGH\_RISK & 50 & server\_error & +10 \\
+SUSPICIOUS & 25 & invalid\_hardware\_id & +15 \\
+CLEAN & 0 & extreme\_latency & +8 \\
+ &  & elevated\_latency & +5 \\
+ &  & unknown\_http\_status & +8 \\
+ &  & schema\_unknown & +3 \\
+\bottomrule
+\end{tabular}
+\caption{Severity scoring configuration}
+\end{table}
+
+\textbf{Example:} A log triggering \texttt{server\_error} (+10) and \texttt{invalid\_hardware\_id} (+15) at ATTACK level (base 80) scores: $\min(80 + 10 + 15, 100) = 100$.
+
+\subsection{Confidence Scoring}
+
+Confidence reflects corroborating evidence---more rules fired = higher certainty:
+
+\begin{align}
+\text{confidence\_score} &= \min(\text{triggered\_rules\_count} \times 25, 100)
+\end{align}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{c c}
+\toprule
+\textbf{Rules Triggered} & \textbf{Confidence} \\
+\midrule
+1 & 25\% \\
+2 & 50\% \\
+3 & 75\% \\
+4+ & 100\% \\
+\bottomrule
+\end{tabular}
+\caption{Confidence score calculation}
+\end{table}
+
+\subsection{Multi-Reason Accumulation}
+
+AEGIS captures \textbf{all} triggered rules for each log, not just the highest-priority one. This provides complete forensic context:
+
+\begin{lstlisting}[language=Python, caption={Alert with multiple reasons}]
+{
+    "log_id": "LOG-001",
+    "alert_level": "ATTACK",
+    "severity_score": 100,
+    "confidence_score": 75,
+    "reasons": [
+        "Server failure: HTTP=500 (>= 500)",
+        "Deceptive node: reports OPERATIONAL but HTTP=500",
+        "Invalid hardware ID: Malicious pattern 'MALWARE' found"
+    ],
+    "rule_ids": ["server_error", "status_contradiction", "invalid_hardware_id"]
+}
+\end{lstlisting}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{API Design}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{Architecture}
+
+The API layer is built on FastAPI with automatic OpenAPI/Swagger documentation. Key architectural decisions:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{CORS-enabled}: Allows cross-origin requests from the frontend dashboard
+    \item \textbf{Stateless design}: API reads from persisted JSON files; restartable without state loss
+    \item \textbf{Standard response envelope}: Every endpoint returns consistent structure
+    \item \textbf{Request tracing}: Each response includes a unique \texttt{request\_id} for debugging
+\end{itemize}
+
+\subsection{Endpoints}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\linewidth}{>{\ttfamily}l >{\bfseries}l X}
+\toprule
+Endpoint & Method & Description \\
+\midrule
+/ & GET & API status and available endpoints \\
+/health & GET & Health check (liveness probe) \\
+/alerts & GET & Detection alerts with filtering and pagination \\
+/metrics & GET & Pipeline metrics with computed percentages \\
+/summary & GET & Combined overview: metrics + top 5 critical alerts \\
+/run-pipeline & POST & Trigger full pipeline execution \\
+\bottomrule
+\end{tabularx}
+\caption{AEGIS API endpoint reference}
+\end{table}
+
+\subsection{Response Envelope}
+
+All endpoints return a standardized JSON envelope:
+
+\begin{lstlisting}[language=Python, caption={Standard API response format}]
+{
+    "status": "success" | "error",
+    "data": { ... },
+    "timestamp": "2026-03-28T12:00:00Z",
+    "version": "1.0",
+    "request_id": "a1b2c3d4",
+    "processing_time_ms": 12.5
+}
+\end{lstlisting}
+
+\subsection{Filtering and Pagination}
+
+The \texttt{GET /alerts} endpoint supports query parameters:
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\linewidth}{l l X}
+\toprule
+\textbf{Parameter} & \textbf{Type} & \textbf{Description} \\
+\midrule
+\texttt{level} & string & Filter: ATTACK, HIGH\_RISK, SUSPICIOUS, CLEAN \\
+\texttt{region} & string & Filter by region (case-insensitive) \\
+\texttt{node\_id} & string & Filter by exact node ID \\
+\texttt{limit} & int & Max results (1--100, default 50) \\
+\bottomrule
+\end{tabularx}
+\caption{Alert filtering parameters}
+\end{table}
+
+Results are sorted by \texttt{severity\_score} descending, then by timestamp.
+
+\subsection{Error Handling}
+
+The API implements three-level defensive error handling:
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Input validation}: Malformed parameters return HTTP 400 with descriptive messages
+    \item \textbf{Not found}: Missing data files return HTTP 404 with "Run pipeline first" guidance
+    \item \textbf{Server errors}: Unexpected exceptions return HTTP 500 with sanitized messages (no stack traces)
+\end{enumerate}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Frontend Dashboard}
+% ─────────────────────────────────────────────────────────────────────────────
+
+The AEGIS dashboard is a Next.js 14 application designed for a single operational goal: enabling infrastructure operators to assess system health and act on threats within seconds.
+
+\subsection{Component Architecture}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\linewidth}{>{\bfseries}l X}
+\toprule
+Component & Purpose \\
+\midrule
+Navbar & Sticky header with AEGIS branding, system status, last-updated timestamp, theme toggle \\
+MetricsCards & 6-card grid: Total Logs, Attacks, High Risk, Suspicious, Clean, Threat Rate \\
+AlertsTable & Filterable, paginated alert log with severity progress bars and color-coded badges \\
+CityMap & Interactive forensic topology: deterministic node placement, HTTP status filtering, zoom/pan \\
+Heatmap & Recharts horizontal bar chart: response time per node with threshold coloring \\
+SummaryPanel & Critical alerts feed, nodes-under-attack chips, threat distribution bar \\
+RunPipelineButton & Stateful button with idle/running/success/error transitions \\
+ThemeToggle & Dark/Light mode switcher with \texttt{localStorage} persistence \\
+\bottomrule
+\end{tabularx}
+\caption{Dashboard component responsibilities}
+\end{table}
+
+\subsection{Data Safety}
+
+All API data passes through \textbf{sanitizer functions} before rendering:
+
+\begin{lstlisting}[language=Python, caption={Frontend data sanitization (TypeScript)}]
+function sanitizeAlert(alert: Record<string, unknown>): Alert {
+    return {
+        log_id: String(alert.log_id || ""),
+        severity_score: safePercentage(alert.severity_score, 0),
+        alert_level: validateAlertLevel(alert.alert_level),
+        // ... defensive null coalescing on every field
+    };
+}
+\end{lstlisting}
+
+This ensures the dashboard never crashes on malformed API responses.
+
+\subsection{Auto-Refresh Mechanism}
+
+The dashboard polls all three endpoints (\texttt{/alerts}, \texttt{/metrics}, \texttt{/summary}) every 15 seconds using \texttt{Promise.all()} for efficient parallel fetching. A deduplication ref prevents overlapping requests.
+
+\subsection{Forensic Topology Map}
+
+The CityMap component provides infrastructure visualization:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Deterministic positioning}: Nodes placed via hash of \texttt{node\_id} (reproducible layout)
+    \item \textbf{HTTP status filtering}: Toggle 2xx/4xx/5xx visibility to isolate threat classes
+    \item \textbf{Zoom and pan}: Mouse wheel + drag for navigation
+    \item \textbf{Forensic tooltips}: Hover reveals node ID, mock IP, and status code
+\end{itemize}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{UI/UX Design}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{Design Principles}
+
+The interface adheres to four core usability principles:
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Clarity first}: Every element serves an informational purpose; decorative elements minimized
+    \item \textbf{Scanability}: Critical data (severity, node ID, confidence) positioned for fast visual scanning
+    \item \textbf{Progressive disclosure}: Summary visible by default; details on demand
+    \item \textbf{Operational tempo}: Designed for active monitoring, not passive reporting
+\end{enumerate}
+
+\subsection{Color-Coded Alert System}
+
+Consistent color coding across all dashboard components:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{>{\bfseries}l l l}
+\toprule
+Alert Level & Color & Hex Value \\
+\midrule
+ATTACK & Red & \texttt{\#DC2626} \\
+HIGH\_RISK & Orange & \texttt{\#EA580C} \\
+SUSPICIOUS & Yellow/Amber & \texttt{\#D97706} \\
+CLEAN & Green & \texttt{\#16A34A} \\
+\bottomrule
+\end{tabular}
+\caption{Alert level color mapping}
+\end{table}
+
+\subsection{Theme System}
+
+The dashboard implements CSS variable-based dual themes:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Dark mode} (default): Deep charcoal palette optimized for SOC environments and low-light monitoring
+    \item \textbf{Light mode}: Clean white theme for daytime use
+    \item \textbf{Persistence}: Theme preference stored in \texttt{localStorage}
+\end{itemize}
+
+\subsection{Responsive Layout}
+
+The grid system adapts from mobile to wide desktop:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Mobile}: Single-column stack
+    \item \textbf{Tablet}: 2-column grid
+    \item \textbf{Desktop}: 3-column layout with main content (2 cols) + summary panel (1 col)
+\end{itemize}
+
+\subsection{Loading States}
+
+All components implement skeleton loading with animated placeholders, providing visual feedback during data fetches without layout shift.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Performance and Efficiency}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{Algorithmic Complexity}
+
+The AEGIS pipeline is designed for predictable, linear-time performance:
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\linewidth}{l l X}
+\toprule
+\textbf{Operation} & \textbf{Complexity} & \textbf{Details} \\
+\midrule
+Node registry lookup & O(1) & Pre-built hash map from \texttt{node\_registry.json} \\
+Schema version lookup & O(1) & Pre-built hash map from \texttt{schema\_versions.json} \\
+Log normalization & O(n) & Single-pass iteration, fixed transformations per record \\
+Detection engine & O(n $\times$ k) & n logs $\times$ 7 rules (k is constant) \\
+Alert sorting & O(n log n) & Sorted by \texttt{severity\_score} descending \\
+\bottomrule
+\end{tabularx}
+\caption{Algorithmic complexity analysis}
+\end{table}
+
+\subsection{Zero External Dependencies}
+
+The core pipeline modules (\texttt{loader}, \texttt{normalizer}, \texttt{utils}, \texttt{evaluator}, \texttt{detector}, \texttt{rules}) use \textbf{only Python Standard Library}:
+
+\begin{itemize}[noitemsep]
+    \item \texttt{json} --- JSON parsing
+    \item \texttt{base64} --- Base64 decode (C-implemented, near-native speed)
+    \item \texttt{re} --- Regular expressions for validation
+    \item \texttt{datetime} --- Timestamp handling
+    \item \texttt{os}, \texttt{sys} --- File I/O and path handling
+\end{itemize}
+
+This means the detection engine has \textbf{zero pip dependencies} and can run in constrained environments.
+
+\subsection{Optimization Techniques}
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Pre-computed lookup maps}: Built once at pipeline start, enabling O(1) node/schema resolution
+    \item \textbf{Sentinel short-circuiting}: Rules skip evaluation when fields contain sentinel values
+    \item \textbf{Early termination}: Priority cascade returns immediately when ATTACK level is found
+    \item \textbf{Parallel frontend fetching}: Dashboard uses \texttt{Promise.all()} for concurrent API calls
+\end{itemize}
+
+\subsection{Scalability Path}
+
+While optimized for hackathon-scale volumes, the architecture supports scaling:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Stateless stages}: Normalization and detection can be parallelized via \texttt{multiprocessing}
+    \item \textbf{ASGI-compatible}: FastAPI + uvicorn deploys behind load balancers without code changes
+    \item \textbf{Database migration}: JSON files can be replaced with PostgreSQL/TimescaleDB for production volumes
+\end{itemize}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Security and Reliability}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{No Arbitrary Code Execution}
+
+Base64-encoded payloads are decoded to strings only. Decoded content is \textbf{never}:
+
+\begin{itemize}[noitemsep]
+    \item Passed to \texttt{eval()}, \texttt{exec()}, or \texttt{os.system()}
+    \item Used to construct file system paths
+    \item Interpreted as code in any form
+\end{itemize}
+
+This eliminates injection vulnerabilities from attacker-controlled payload data.
+
+\subsection{Input Validation}
+
+All inputs are validated at pipeline entry:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Required keys}: Logs missing \texttt{log\_id}, \texttt{node\_id}, or \texttt{schema\_version} are skipped
+    \item \textbf{Type coercion}: All values pass through \texttt{safe\_int()}, \texttt{safe\_str()} with explicit defaults
+    \item \textbf{Bounds checking}: API parameters clamped to valid ranges (e.g., limit 1--100)
+\end{itemize}
+
+\subsection{Deterministic Behavior}
+
+The detection engine produces \textbf{identical outputs for identical inputs}. There is no:
+
+\begin{itemize}[noitemsep]
+    \item Random state
+    \item Probabilistic sampling
+    \item Time-dependent logic in detection
+\end{itemize}
+
+This property enables:
+\begin{itemize}[noitemsep]
+    \item Stable test cases with expected outputs
+    \item Re-runnable audit trails
+    \item Reproducible debugging
+\end{itemize}
+
+\subsection{Fault Isolation}
+
+Individual record failures are isolated:
+
+\begin{lstlisting}[language=Python, caption={Fault isolation pattern}]
+for raw_log in system_logs:
+    try:
+        result = normalize_log(raw_log, registry_map, schema_map)
+        if result:
+            normalized_logs.append(result)
+    except Exception as e:
+        print(f"[NORMALIZER] Error on log '{raw_log.get('log_id')}' - skipping")
+        skipped += 1
+\end{lstlisting}
+
+One malformed log never crashes the entire pipeline.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Testing and Validation}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{Unit Test Suite}
+
+AEGIS includes a 9-case test suite (\texttt{detection\_test.py}) covering all classification paths:
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\linewidth}{l l X}
+\toprule
+\textbf{Case} & \textbf{Expected} & \textbf{Scenario} \\
+\midrule
+1 & CLEAN & All fields healthy (HTTP 200, latency 290ms, valid HW ID) \\
+2 & SUSPICIOUS & Latency 1800ms (in 1500--2999ms band) \\
+3 & HIGH\_RISK & Latency 3500ms ($\geq$3000ms) \\
+4 & ATTACK & HTTP 500 + deceptive status + malicious HW ID \\
+5 & ATTACK & HTTP 502 + malicious hardware ID \\
+6 & ATTACK & Missing HTTP status (sentinel -1) \\
+7 & ATTACK & Invalid Base64 hardware ID \\
+8 & ATTACK & Unknown schema v99 + missing HTTP \\
+9 & HIGH\_RISK & Latency exactly 3000ms (verifies no double-fire) \\
+\bottomrule
+\end{tabularx}
+\caption{Detection test cases}
+\end{table}
+
+\subsection{Double-Fire Prevention Test}
+
+Case 9 specifically validates that \texttt{elevated\_latency} does \textbf{not} fire when latency $\geq$3000ms:
+
+\begin{lstlisting}[language=Python, caption={Double-fire prevention validation}]
+# Case 9: latency = 3000ms
+# Expected: HIGH_RISK (extreme_latency only)
+# Validation: elevated_latency must NOT be in rule_ids
+
+if "elevated_latency" in alert["rule_ids"]:
+    extra_ok = False  # FAIL: double-fire bug detected
+\end{lstlisting}
+
+\subsection{Test Execution}
+
+\begin{lstlisting}[language=bash, caption={Running the test suite}]
+cd backend
+python detection_test.py    # 9 unit tests + batch test
+python pipeline_test.py     # End-to-end normalization smoke test
+\end{lstlisting}
+
+\subsection{Immutable Test Inputs}
+
+Test case dictionaries are copied before evaluation to prevent mutation:
+
+\begin{lstlisting}[language=Python]
+test_input = {k: v for k, v in tc.items() if not k.startswith("_")}
+alert = evaluate_log(test_input)  # Never mutates original
+\end{lstlisting}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{AI Usage Declaration}
+% ─────────────────────────────────────────────────────────────────────────────
+
+In compliance with hackathon transparency requirements, the team declares the following regarding AI-assisted tool usage during development.
+
+\subsection{AI as Development Accelerator}
+
+AI language model tools were used in a \textbf{supporting, assistive capacity} for:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Code structuring}: Generating boilerplate patterns and suggesting project layout conventions
+    \item \textbf{Debugging assistance}: Identifying potential edge cases in schema normalization and suggesting defensive coding patterns
+    \item \textbf{Documentation refinement}: Assisting in phrasing technical descriptions clearly
+    \item \textbf{Syntax validation}: Verifying Python/TypeScript correctness during rapid iteration
+\end{itemize}
+
+\subsection{Human Ownership of Core Engineering}
+
+\begin{infobox}
+\textbf{Critical Distinction:} All core system logic, architectural decisions, detection rule design, threshold calibration, scoring model formulation, and correctness validation were conceived, designed, reviewed, and verified by team members.
+
+AI tools did \textbf{not}:
+\begin{itemize}[noitemsep]
+    \item Determine the pipeline architecture
+    \item Choose detection thresholds or scoring weights
+    \item Design the multi-stage Base64 validation pipeline
+    \item Define the priority cascade or confidence formula
+    \item Validate classification correctness
+\end{itemize}
+
+These were engineering decisions made by the team, supported by technical reasoning documented throughout this report.
+\end{infobox}
+
+\subsection{Framing}
+
+AI served as an \textbf{acceleration tool}---similar to an IDE's autocomplete or documentation lookup---while core logic, architecture, and validation remained \textbf{human-engineered}. The team takes full ownership of every component in the AEGIS system.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Challenges and Solutions}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{Schema Field Name Drift}
+
+\textbf{Challenge:} Three schema versions with different field names (\texttt{http\_code} vs \texttt{response\_code} vs \texttt{status\_code}) required dynamic field extraction.
+
+\textbf{Solution:} Implemented \texttt{field\_map} lookup system in \texttt{schema\_versions.json}. The normalizer routes canonical field names through version-specific mappings at O(1) cost.
+
+\subsection{Latency Rule Double-Firing}
+
+\textbf{Challenge:} Initial implementation fired both \texttt{elevated\_latency} and \texttt{extreme\_latency} when latency exceeded 3000ms, causing incorrect confidence scores.
+
+\textbf{Solution:} Made rules mutually exclusive: \texttt{elevated\_latency} fires only in 1500--2999ms band; \texttt{extreme\_latency} handles $\geq$3000ms. Test Case 9 validates this fix.
+
+\subsection{Frontend Null Safety}
+
+\textbf{Challenge:} API responses with missing or null fields caused dashboard crashes.
+
+\textbf{Solution:} Implemented \texttt{sanitizeAlert()}, \texttt{sanitizeMetrics()}, and \texttt{sanitizeSummary()} functions with defensive null coalescing on every field before rendering.
+
+\subsection{Base64 Padding Errors}
+
+\textbf{Challenge:} Some hardware IDs had incorrect Base64 padding, causing decode failures.
+
+\textbf{Solution:} Added padding correction before decode: \texttt{padded = cleaned + "=" * ((4 - len(cleaned) \% 4) \% 4)}
+
+\subsection{CORS Configuration}
+
+\textbf{Challenge:} Frontend on Vercel couldn't reach backend on Render due to CORS blocks.
+
+\textbf{Solution:} Configured FastAPI with permissive CORS middleware (\texttt{allow\_origins=["*"]}) for hackathon deployment, with documentation for production hardening.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Results and Deliverables}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{System Deliverables}
+
+The AEGIS team delivered a complete, functioning full-stack system:
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\linewidth}{>{\bfseries}l X}
+\toprule
+Deliverable & Description \\
+\midrule
+Backend Pipeline & 6 Python modules processing v1/v2/v3 schema logs with fault-tolerant normalization \\
+Detection Engine & 7-rule evaluator with severity (0--100) and confidence (0--100) scoring \\
+Base64 Scanner & 5-stage validation pipeline with 12 malware keyword signatures \\
+REST API & FastAPI with 6 endpoints, Swagger docs, standardized response envelopes \\
+Frontend Dashboard & Next.js 14 with 8 components, auto-refresh, forensic topology map \\
+Test Suite & 9 unit tests covering all classification paths with deterministic validation \\
+Deployment & Render (backend) + Vercel (frontend) production deployment \\
+Documentation & README, SETUP guide, and this technical report \\
+\bottomrule
+\end{tabularx}
+\caption{AEGIS deliverables}
+\end{table}
+
+\subsection{Detection Accuracy}
+
+The test suite validates 100\% accuracy across all classification scenarios:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{CLEAN}: Correctly identified when all fields healthy
+    \item \textbf{SUSPICIOUS}: Triggered only in 1500--2999ms latency band
+    \item \textbf{HIGH\_RISK}: Triggered at $\geq$3000ms without double-firing
+    \item \textbf{ATTACK}: Correctly escalated for HTTP 500, missing status, invalid Base64, malware keywords
+\end{itemize}
+
+\subsection{Live Demonstration}
+
+The system was deployed and demonstrated live:
+
+\begin{itemize}[noitemsep]
+    \item Backend API: \texttt{https://[deployed-url].onrender.com}
+    \item Frontend Dashboard: \texttt{https://[deployed-url].vercel.app}
+    \item Swagger Documentation: \texttt{/docs} endpoint
+\end{itemize}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Future Scope}
+% ─────────────────────────────────────────────────────────────────────────────
+
+The AEGIS architecture is designed for extensibility. High-value enhancement directions:
+
+\subsection{Machine Learning Integration}
+
+The rule-based engine provides labeled training data for supervised anomaly detection. An ML layer could be added downstream to detect complex, multi-dimensional patterns beyond threshold rules.
+
+\subsection{Real-Time Streaming}
+
+Replace batch processing with streaming ingestion (Apache Kafka, WebSocket) to reduce detection latency from polling-interval scale to near-real-time.
+
+\subsection{Database Backend}
+
+Migrate from JSON file storage to TimescaleDB or PostgreSQL for historical analysis, time-series queries, and forensic investigation.
+
+\subsection{Alert Correlation Engine}
+
+Cross-node pattern detection to surface coordinated attacks or cascading failures that manifest as independent anomalies at individual node level.
+
+\subsection{SIEM Integration}
+
+Export alerts in Syslog/CEF/STIX format for integration with enterprise security platforms (Splunk, Microsoft Sentinel).
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Conclusion}
+% ─────────────────────────────────────────────────────────────────────────────
+
+AEGIS demonstrates that a deterministic, rule-based approach to cyber-infrastructure defense achieves both technical rigor and operational clarity without relying on opaque ML models or external dependencies.
+
+\textbf{Key Engineering Contributions:}
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Schema-aware normalization} that handles field name drift across three versions with O(1) lookup
+    \item \textbf{5-stage Base64 validation pipeline} with malware keyword scanning and zero code execution risk
+    \item \textbf{7-rule detection engine} with mutually exclusive latency rules preventing double-firing
+    \item \textbf{Severity + confidence scoring model} providing ranked, auditable threat prioritization
+    \item \textbf{Fault-tolerant pipeline} where individual record failures never crash batch processing
+    \item \textbf{Full-stack delivery} from CSV ingestion to interactive dashboard with 15-second auto-refresh
+\end{enumerate}
+
+The system meets all hackathon requirements: multi-schema log ingestion, data decoding and correction, deterministic threat detection, and clear visualization for rapid operator decision-making.
+
+\begin{infobox}
+\centering
+\textbf{AEGIS decodes chaos. Delivers structured truth. Defends infrastructure.}
+\end{infobox}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\vspace{1em}
+\begin{center}
+\rule{0.5\linewidth}{0.4pt}\\[0.4em]
+{\small\textit{AEGIS --- Advanced Enforcement \& Guardian Infrastructure System\\
+Rosetta Code Hackathon Submission\\
+Team: Krish Goyal, Abhinav Atul, Akshat Singh, Sejal Mishra}}
+\end{center}
+
+\end{document}
