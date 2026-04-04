@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { DashboardLayout, AlertsTable, ErrorBoundary, RunPipelineButton } from "@/components";
-import { fetchAlerts, fetchMetrics } from "@/lib/api";
+import { fetchAlerts, fetchMetrics, runPipeline } from "@/lib/api";
 import { Alert, Metrics } from "@/types";
 import { RefreshCw, AlertTriangle, Filter, Search, Download, ChevronLeft, ChevronRight, Clock, Database } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -103,6 +103,11 @@ export default function AlertsPage() {
     clean: metrics?.clean_count || 0,
   };
 
+  const handleRunPipeline = useCallback(async () => {
+    await runPipeline();
+    await loadData();
+  }, [loadData]);
+
   return (
     <DashboardLayout
       title="Security Alerts"
@@ -131,7 +136,7 @@ export default function AlertsPage() {
             <RefreshCw className={cn("w-4 h-4", loading && "animate-spin")} />
             Refresh
           </button>
-          <RunPipelineButton onComplete={loadData} />
+          <RunPipelineButton onRun={handleRunPipeline} />
           <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary text-sm font-medium transition-colors">
             <Download className="w-4 h-4" />
             Export
