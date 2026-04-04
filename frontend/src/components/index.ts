@@ -10,3 +10,7 @@ export { NetworkGraph } from "./NetworkGraph";
 export { CommandNodePanel } from "./CommandNodePanel";
 export { FingerprintPanel } from "./FingerprintPanel";
 export { NodeRankingPanel } from "./NodeRankingPanel";
+export { ErrorBoundary, withErrorBoundary } from "./ErrorBoundary";
+export { Sidebar } from "./Sidebar";
+export { TopBar } from "./TopBar";
+export { DashboardLayout } from "./DashboardLayout";

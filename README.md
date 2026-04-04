@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/AEGIS-Cyber%20Defense-6366f1?style=for-the-badge&logo=shield&logoColor=white" alt="AEGIS Badge" />
+  <img src="https://img.shields.io/badge/AEGIS-Cyber%20Attribution-10b981?style=for-the-badge&logo=shield&logoColor=white" alt="AEGIS Badge" />
   <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
   <img src="https://img.shields.io/badge/Next.js-14-000000?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js" />
   <img src="https://img.shields.io/badge/FastAPI-0.100+-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" />
@@ -9,7 +9,7 @@
 <h1 align="center">🛡️ AEGIS</h1>
 <h3 align="center">Cyber-Infrastructure Attribution Engine</h3>
 <p align="center">
-  <strong>Graph Intelligence · Metadata Fingerprinting · Explainable Command-Node Attribution</strong>
+  <strong>Graph Intelligence · Behavioral Fingerprinting · Explainable Command-Node Attribution</strong>
 </p>
 
 <p align="center">
@@ -49,8 +49,8 @@ Modern infrastructure generates telemetry across dozens of schema versions, regi
 | 📊 **Scoring** | Severity + Confidence | Composite 0–100 scores with per-rule bonus stacking |
 | 🌐 **API** | RESTful + Swagger | 9 endpoints with filtering, pagination, attribution payloads, standard response envelope |
 | 🕸️ **Attribution** | Graph + Fingerprints + Scoring | Directional graph, centrality, behavior clusters, top-candidate ranking |
-| 🖥️ **Dashboard** | Real-time UI | Interactive attribution graph, command-node panel, fingerprint clusters, influence ranking, heatmap |
-| 🎨 **Theming** | Dark + Light mode | CSS variable-based theme system with `localStorage` persistence |
+| 🖥️ **Dashboard** | Multi-page UI | Interactive network graph, attribution panel, fingerprint analysis, analytics charts, alerts table |
+| 🎨 **Theming** | Dark + Light mode | Enterprise dark theme (olive-black), clean light theme with `localStorage` persistence |
 | ♻️ **Auto-refresh** | 15-second polling | Dashboard silently re-fetches alerts, metrics, and summary every 15 seconds |
 | 🛡️ **Safety** | Zero eval/exec | Decoded payloads are treated as data only — never executed |
 
