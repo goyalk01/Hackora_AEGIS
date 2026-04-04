@@ -1,24 +1,28 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
-import { DashboardLayout, AlertsTable, ErrorBoundary } from "@/components";
-import { fetchAlerts } from "@/lib/api";
-import { Alert } from "@/types";
-import { RefreshCw, AlertTriangle, Filter, Search, Download, ChevronLeft, ChevronRight } from "lucide-react";
+import { DashboardLayout, AlertsTable, ErrorBoundary, RunPipelineButton } from "@/components";
+import { fetchAlerts, fetchMetrics } from "@/lib/api";
+import { Alert, Metrics } from "@/types";
+import { RefreshCw, AlertTriangle, Filter, Search, Download, ChevronLeft, ChevronRight, Clock, Database } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const ALERT_LEVELS = ["ALL", "ATTACK", "HIGH_RISK", "SUSPICIOUS", "CLEAN"] as const;
 const PAGE_SIZE = 50;
+const AUTO_REFRESH_INTERVAL = 30000; // 30 seconds
 
 export default function AlertsPage() {
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [filteredAlerts, setFilteredAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [dataGeneratedAt, setDataGeneratedAt] = useState<string | null>(null);
   
   const [selectedLevel, setSelectedLevel] = useState<typeof ALERT_LEVELS[number]>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [metrics, setMetrics] = useState<Metrics | null>(null);
   
   const requestController = useRef<AbortController | null>(null);
 
@@ -33,8 +37,17 @@ export default function AlertsPage() {
     setError(null);
 
     try {
-      const data = await fetchAlerts({ limit: 100 }, signal);
-      setAlerts(data.alerts);
+      const [alertsData, metricsData] = await Promise.all([
+        fetchAlerts(
+          { limit: 500, level: selectedLevel !== "ALL" ? selectedLevel : undefined },
+          signal
+        ),
+        fetchMetrics(signal)
+      ]);
+      setAlerts(alertsData.alerts);
+      setMetrics(metricsData);
+      setLastUpdated(new Date());
+      setDataGeneratedAt(alertsData.last_generated);
     } catch (err) {
       if ((err as Error).name !== "AbortError") {
         setError((err as Error).message);
@@ -42,20 +55,25 @@ export default function AlertsPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [selectedLevel]);
 
+  // Initial load
   useEffect(() => {
     loadData();
     return () => requestController.current?.abort();
   }, [loadData]);
 
-  // Filter alerts based on level and search
+  // Auto-refresh
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadData();
+    }, AUTO_REFRESH_INTERVAL);
+    return () => clearInterval(interval);
+  }, [loadData]);
+
+  // Filter alerts based on search (level is now handled by API)
   useEffect(() => {
     let filtered = alerts;
-
-    if (selectedLevel !== "ALL") {
-      filtered = filtered.filter((a) => a.alert_level === selectedLevel);
-    }
 
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
@@ -69,7 +87,7 @@ export default function AlertsPage() {
 
     setFilteredAlerts(filtered);
     setCurrentPage(1);
-  }, [alerts, selectedLevel, searchQuery]);
+  }, [alerts, searchQuery]);
 
   const totalPages = Math.ceil(filteredAlerts.length / PAGE_SIZE);
   const paginatedAlerts = filteredAlerts.slice(
@@ -78,11 +96,11 @@ export default function AlertsPage() {
   );
 
   const alertCounts = {
-    all: alerts.length,
-    attack: alerts.filter((a) => a.alert_level === "ATTACK").length,
-    highRisk: alerts.filter((a) => a.alert_level === "HIGH_RISK").length,
-    suspicious: alerts.filter((a) => a.alert_level === "SUSPICIOUS").length,
-    clean: alerts.filter((a) => a.alert_level === "CLEAN").length,
+    all: metrics?.total_alerts || 0,
+    attack: metrics?.attack_count || 0,
+    highRisk: metrics?.high_risk_count || 0,
+    suspicious: metrics?.suspicious_count || 0,
+    clean: metrics?.clean_count || 0,
   };
 
   return (
@@ -90,7 +108,21 @@ export default function AlertsPage() {
       title="Security Alerts"
       description="Real-time security events and anomaly detection"
       actions={
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          <div className="flex flex-col items-end text-xs text-muted-foreground">
+            {dataGeneratedAt && (
+              <span className="flex items-center gap-1">
+                <Database className="w-3 h-3" />
+                Data: {new Date(dataGeneratedAt).toLocaleString()}
+              </span>
+            )}
+            {lastUpdated && (
+              <span className="flex items-center gap-1">
+                <Clock className="w-3 h-3" />
+                Fetched: {lastUpdated.toLocaleTimeString()}
+              </span>
+            )}
+          </div>
           <button
             onClick={loadData}
             disabled={loading}
@@ -99,6 +131,7 @@ export default function AlertsPage() {
             <RefreshCw className={cn("w-4 h-4", loading && "animate-spin")} />
             Refresh
           </button>
+          <RunPipelineButton onComplete={loadData} />
           <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary text-sm font-medium transition-colors">
             <Download className="w-4 h-4" />
             Export

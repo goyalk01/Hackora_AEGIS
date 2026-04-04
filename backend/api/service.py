@@ -27,7 +27,7 @@ COMMAND_NODE_FILE = os.path.join(DATA_DIR, "command_node.json")
 # ── Constants ──────────────────────────────────────────────────────────────────
 API_VERSION = "1.0"
 DEFAULT_LIMIT = 50
-MAX_LIMIT = 100
+MAX_LIMIT = 500  # Increased for better alert viewing
 
 # Ensure main module can be imported
 sys.path.insert(0, BASE_DIR)
@@ -231,9 +231,17 @@ def read_alerts(
 
     filtered = filtered[:effective_limit]
 
+    # Get last generation timestamp from most recent alert
+    last_generated = None
+    if alerts_list:
+        ingestion_times = [a.get("ingestion_time") for a in alerts_list if a.get("ingestion_time")]
+        if ingestion_times:
+            last_generated = max(ingestion_times)
+
     return success_response({
         "total": len(filtered),
         "limit": effective_limit,
+        "last_generated": last_generated,
         "alerts": filtered
     }, request_id, start_time)
 

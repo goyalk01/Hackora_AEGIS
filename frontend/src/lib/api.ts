@@ -174,11 +174,12 @@ export async function fetchAlerts(
   const query = searchParams.toString();
   const endpoint = `/alerts${query ? `?${query}` : ""}`;
 
-  const data = await fetchApi<{ total: number; limit: number; alerts: unknown[] }>(endpoint, { signal });
+  const data = await fetchApi<{ total: number; limit: number; last_generated?: string | null; alerts: unknown[] }>(endpoint, { signal });
 
   return {
     total: safePositiveInt(data.total, 0),
     limit: safePositiveInt(data.limit, 50),
+    last_generated: data.last_generated || null,
     alerts: Array.isArray(data.alerts)
       ? data.alerts.map((a) => sanitizeAlert(a as Record<string, unknown>))
       : [],
