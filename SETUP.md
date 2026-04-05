@@ -191,5 +191,6 @@ The backend is deployed on Render. To deploy your own:
 3. Set root directory to `backend`
 4. Build command: `pip install -r requirements.txt`
 5. Start command: `uvicorn app:app --host 0.0.0.0 --port $PORT`
+6. Add env var: `PYTHON_VERSION=3.11.11`
 
 Or use the `render.yaml` file for automatic configuration.

@@ -697,7 +697,8 @@ Then check:
    - **Root Directory**: `backend`
    - **Build Command**: `pip install -r requirements.txt`
    - **Start Command**: `uvicorn app:app --host 0.0.0.0 --port $PORT`
-   - **Environment**: Python 3
+   - **Environment**: Python 3.11
+   - **Environment Variable**: `PYTHON_VERSION=3.11.11`
 5. Deploy!
 
 Or use the included `render.yaml` for one-click deployment:
